@@ -8,4 +8,4 @@ poise is where those fixes live once and for all. It has motion tokens, componen
 
 Two ideas sit underneath all of it. Motion is part of a component, not decoration added afterwards: a button isn't done until its press feels right. And it has to hold up on the phones people actually own, not just on a simulator running on a MacBook.
 
-It's early. I'm building it inside a real app, Jeats, and pulling pieces out as they prove themselves. Nothing here is ready to use yet.
+It's early, and I'm still building it. Nothing here is ready to use yet.
