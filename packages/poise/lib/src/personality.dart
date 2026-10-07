@@ -43,6 +43,44 @@ final class PoiseMotion {
     stagger: Duration(milliseconds: 40),
   );
 
+  static const crisp = PoiseMotion(
+    feedback: Move(perceivedDuration: Duration(milliseconds: 80)),
+    enter: Move(perceivedDuration: Duration(milliseconds: 220)),
+    exit: Move(perceivedDuration: Duration(milliseconds: 150)),
+    transition: Move(perceivedDuration: Duration(milliseconds: 280)),
+    change: Fade(duration: Duration(milliseconds: 120)),
+    attention: Move(
+      perceivedDuration: Duration(milliseconds: 200),
+      bounce: 0.2,
+    ),
+    celebrate: Move(perceivedDuration: Duration(milliseconds: 300)),
+    follow: Move(perceivedDuration: Duration(milliseconds: 220)),
+    loop: Fade(duration: Duration(milliseconds: 1000)),
+    stagger: Duration(milliseconds: 25),
+  );
+
+  static const playful = PoiseMotion(
+    feedback: Move(perceivedDuration: Duration(milliseconds: 150), bounce: 0.3),
+    enter: Move(perceivedDuration: Duration(milliseconds: 400), bounce: 0.25),
+    exit: Move(perceivedDuration: Duration(milliseconds: 250)),
+    transition: Move(
+      perceivedDuration: Duration(milliseconds: 450),
+      bounce: 0.15,
+    ),
+    change: Move(perceivedDuration: Duration(milliseconds: 300), bounce: 0.2),
+    attention: Move(
+      perceivedDuration: Duration(milliseconds: 300),
+      bounce: 0.4,
+    ),
+    celebrate: Move(
+      perceivedDuration: Duration(milliseconds: 500),
+      bounce: 0.4,
+    ),
+    follow: Move(perceivedDuration: Duration(milliseconds: 350), bounce: 0.25),
+    loop: Move(perceivedDuration: Duration(milliseconds: 800), bounce: 0.3),
+    stagger: Duration(milliseconds: 60),
+  );
+
   static const reduced = PoiseMotion(
     feedback: Fade(duration: Duration(milliseconds: 100)),
     enter: Fade(duration: Duration(milliseconds: 150)),

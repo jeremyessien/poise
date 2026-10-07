@@ -22,7 +22,11 @@ Map<String, Feel> timedWords(PoiseMotion motion) => {
 };
 
 void main() {
-  const personalities = {'calm': PoiseMotion.calm};
+  const personalities = {
+    'calm': PoiseMotion.calm,
+    'crisp': PoiseMotion.crisp,
+    'playful': PoiseMotion.playful,
+  };
 
   for (final MapEntry(key: name, value: motion) in personalities.entries) {
     group('$name keeps the promises every personality makes:', () {
@@ -49,12 +53,43 @@ void main() {
     });
   }
 
-  test('calm bounces only for attention', () {
-    for (final MapEntry(key: word, value: feel) in timedWords(
-      PoiseMotion.calm,
+  for (final (name, motion) in [
+    ('calm', PoiseMotion.calm),
+    ('crisp', PoiseMotion.crisp),
+  ]) {
+    test('$name bounces only for attention', () {
+      for (final MapEntry(key: word, value: feel) in timedWords(
+        motion,
+      ).entries) {
+        expect(bounces(feel), word == 'attention', reason: word);
+      }
+    });
+  }
+
+  test('crisp is quicker than calm everywhere', () {
+    final calm = timedWords(PoiseMotion.calm);
+    for (final MapEntry(key: word, value: crispFeel) in timedWords(
+      PoiseMotion.crisp,
     ).entries) {
-      expect(bounces(feel), word == 'attention', reason: word);
+      if (calm[word] case final calmFeel?) {
+        expect(
+          feltDuration(crispFeel),
+          lessThan(feltDuration(calmFeel)),
+          reason: word,
+        );
+      } else {
+        fail('calm has no $word');
+      }
     }
+  });
+
+  test('playful bounces on touch, arrival and celebration', () {
+    const playful = PoiseMotion.playful;
+    expect([
+      playful.feedback,
+      playful.enter,
+      playful.celebrate,
+    ], everyElement(predicate<Feel>(bounces, 'bounces')));
   });
 
   group('reduced', () {
