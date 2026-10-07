@@ -22,3 +22,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: Instrument Sans
+      fonts:
+        - asset: assets/fonts/InstrumentSans.ttf
+    - family: Instrument Serif
+      fonts:
+        - asset: assets/fonts/InstrumentSerif-Italic.ttf
+          style: italic
