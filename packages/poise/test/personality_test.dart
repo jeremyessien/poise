@@ -46,6 +46,44 @@ void main() {
     });
   });
 
+  group('reduced', () {
+    const reduced = PoiseMotion.reduced;
+
+    test('nothing travels except what the finger is driving', () {
+      final timed = [
+        reduced.feedback,
+        reduced.enter,
+        reduced.exit,
+        reduced.transition,
+        reduced.change,
+        reduced.attention,
+        reduced.celebrate,
+        reduced.loop,
+      ];
+      expect(timed, everyElement(isA<Fade>()));
+    });
+
+    test('a released drag settles without bouncing', () {
+      expect(reduced.follow.bounce, 0);
+    });
+
+    test('groups arrive together', () {
+      expect(reduced.stagger, Duration.zero);
+    });
+
+    test('says so, so loops can hold still', () {
+      expect(reduced.reducesMotion, isTrue);
+      expect(PoiseMotion.calm.reducesMotion, isFalse);
+    });
+  });
+
+  test('copyWith keeps a reduced personality reduced', () {
+    final adjusted = PoiseMotion.reduced.copyWith(
+      stagger: const Duration(milliseconds: 10),
+    );
+    expect(adjusted.reducesMotion, isTrue);
+  });
+
   test('copyWith changes one word and keeps the rest', () {
     const slowerEnter = Move(perceivedDuration: Duration(milliseconds: 500));
     final adjusted = PoiseMotion.calm.copyWith(enter: slowerEnter);

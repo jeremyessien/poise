@@ -12,6 +12,7 @@ final class PoiseMotion {
     required this.follow,
     required this.loop,
     required this.stagger,
+    this.reducesMotion = false,
   });
 
   final Feel feedback;
@@ -24,6 +25,7 @@ final class PoiseMotion {
   final Move follow;
   final Feel loop;
   final Duration stagger;
+  final bool reducesMotion;
 
   static const calm = PoiseMotion(
     feedback: Move(perceivedDuration: Duration(milliseconds: 120)),
@@ -39,6 +41,20 @@ final class PoiseMotion {
     follow: Move(perceivedDuration: Duration(milliseconds: 300)),
     loop: Fade(duration: Duration(milliseconds: 1200)),
     stagger: Duration(milliseconds: 40),
+  );
+
+  static const reduced = PoiseMotion(
+    feedback: Fade(duration: Duration(milliseconds: 100)),
+    enter: Fade(duration: Duration(milliseconds: 150)),
+    exit: Fade(duration: Duration(milliseconds: 150)),
+    transition: Fade(duration: Duration(milliseconds: 150)),
+    change: Fade(duration: Duration(milliseconds: 150)),
+    attention: Fade(duration: Duration(milliseconds: 150)),
+    celebrate: Fade(duration: Duration(milliseconds: 150)),
+    follow: Move(perceivedDuration: Duration(milliseconds: 200)),
+    loop: Fade(duration: Duration(milliseconds: 150)),
+    stagger: Duration.zero,
+    reducesMotion: true,
   );
 
   PoiseMotion copyWith({
@@ -63,5 +79,6 @@ final class PoiseMotion {
     follow: follow ?? this.follow,
     loop: loop ?? this.loop,
     stagger: stagger ?? this.stagger,
+    reducesMotion: reducesMotion,
   );
 }
