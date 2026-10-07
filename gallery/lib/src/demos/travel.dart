@@ -4,21 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:poise/poise.dart';
 
 import '../lane.dart';
+import 'playable.dart';
 
 enum TravelDirection { arriving, leaving }
 
-final class TravelDemo extends StatefulWidget {
-  const TravelDemo({super.key, required this.direction, required this.play});
+final class TravelDemo extends PlayableDemo {
+  const TravelDemo({super.key, required this.direction, required super.play});
 
   final TravelDirection direction;
-  final Listenable play;
 
   @override
   State<TravelDemo> createState() => _TravelDemoState();
 }
 
 final class _TravelDemoState extends State<TravelDemo>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, ReplaysOnPlay {
   late final AnimationController _progress = AnimationController(
     vsync: this,
     value: widget.direction == TravelDirection.arriving ? 1 : 0,
@@ -26,28 +26,13 @@ final class _TravelDemoState extends State<TravelDemo>
   late Feel _feel;
 
   @override
-  void initState() {
-    super.initState();
-    widget.play.addListener(_replay);
-  }
-
-  @override
-  void didUpdateWidget(TravelDemo oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.play != widget.play) {
-      oldWidget.play.removeListener(_replay);
-      widget.play.addListener(_replay);
-    }
-  }
-
-  @override
   void dispose() {
-    widget.play.removeListener(_replay);
     _progress.dispose();
     super.dispose();
   }
 
-  void _replay() {
+  @override
+  void replay() {
     _progress.duration = _feel.duration;
     _progress.forward(from: 0);
   }
@@ -67,25 +52,15 @@ final class _TravelDemoState extends State<TravelDemo>
       (Fade(), TravelDirection.leaving) => ReverseAnimation(settled),
     };
 
-    return Stack(
-      children: [
-        Positioned(
-          top: LaneGeometry.restTop,
-          left: 0,
-          right: 0,
-          child: AnimatedBuilder(
-            animation: settled,
-            builder: (context, object) => Transform.translate(
-              offset: Offset(0, _travelFromRest(settled.value)),
-              child: object,
-            ),
-            child: FadeTransition(
-              opacity: opacity,
-              child: const Center(child: LaneObject()),
-            ),
-          ),
+    return AtRest(
+      child: AnimatedBuilder(
+        animation: settled,
+        builder: (context, object) => Transform.translate(
+          offset: Offset(0, _travelFromRest(settled.value)),
+          child: object,
         ),
-      ],
+        child: FadeTransition(opacity: opacity, child: const LaneObject()),
+      ),
     );
   }
 
