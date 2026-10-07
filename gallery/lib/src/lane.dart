@@ -46,18 +46,32 @@ final class Lane extends StatelessWidget {
 }
 
 final class LaneObject extends StatelessWidget {
-  const LaneObject({super.key});
+  const LaneObject({
+    super.key,
+    this.size = LaneGeometry.objectSize,
+    this.primary = true,
+    this.child,
+  });
+
+  final double size;
+  final bool primary;
+  final Widget? child;
 
   @override
-  Widget build(BuildContext context) => Container(
-    key: ValueKey('lane-object-${_LanePersonality.of(context).label}'),
-    width: LaneGeometry.objectSize,
-    height: LaneGeometry.objectSize,
-    decoration: BoxDecoration(
-      color: _LanePersonality.of(context).color,
-      borderRadius: BorderRadius.circular(12),
-    ),
-  );
+  Widget build(BuildContext context) {
+    final personality = _LanePersonality.of(context);
+    return Container(
+      key: primary ? ValueKey('lane-object-${personality.label}') : null,
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: personality.color,
+        borderRadius: BorderRadius.circular(size * 0.27),
+      ),
+      child: child,
+    );
+  }
 }
 
 final class _LanePersonality extends InheritedWidget {
