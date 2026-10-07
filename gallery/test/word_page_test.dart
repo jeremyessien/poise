@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gallery/src/lane_curve.dart';
 import 'package:gallery/src/settings.dart';
 import 'package:gallery/src/theme.dart';
 import 'package:gallery/src/word_page.dart';
@@ -137,5 +138,20 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(tester.getTopLeft(object).dy, closeTo(rest.dy, 0.5));
+  });
+
+  testWidgets('Show curve draws a curve in each lane', (tester) async {
+    settings.showCurve = true;
+    await pumpPage(tester, MotionWord.enter);
+    for (final personality in Personality.values) {
+      expect(
+        find.descendant(
+          of: find.byType(LaneCurve),
+          matching: find.byType(CustomPaint),
+        ),
+        findsNWidgets(Personality.values.length),
+        reason: personality.label,
+      );
+    }
   });
 }

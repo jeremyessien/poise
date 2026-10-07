@@ -16,3 +16,18 @@ extension WordFeel on MotionWord {
     MotionWord.stagger => null,
   };
 }
+
+const curveWindowStretch = 0.8;
+
+int feltMicros(Feel? feel) => switch (feel) {
+  Move(:final perceivedDuration) => perceivedDuration.inMicroseconds,
+  Fade(:final duration) => duration.inMicroseconds,
+  null => 0,
+};
+
+double progressAt(MotionWord word, Feel feel, double t) => switch (word) {
+  MotionWord.exit => 1 - feel.curve.transform(t),
+  MotionWord.loop =>
+    t < 0.5 ? feel.curve.transform(t * 2) : feel.curve.transform((1 - t) * 2),
+  _ => feel.curve.transform(t),
+};

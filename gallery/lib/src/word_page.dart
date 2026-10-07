@@ -1,10 +1,14 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:poise/poise.dart';
 
 import 'demos/demos.dart';
 import 'lane.dart';
+import 'lane_curve.dart';
 import 'settings.dart';
 import 'theme.dart';
+import 'word_feel.dart';
 import 'words.dart';
 
 final class WordPage extends StatefulWidget {
@@ -18,6 +22,13 @@ final class WordPage extends StatefulWidget {
 
 final class _WordPageState extends State<WordPage> {
   final _play = PlaySignal();
+
+  double get _curveWindow =>
+      Personality.values
+          .map((p) => feltMicros(widget.word.feelIn(p.motion)))
+          .fold(0, math.max)
+          .toDouble() *
+      curveWindowStretch;
 
   @override
   void dispose() {
@@ -57,7 +68,17 @@ final class _WordPageState extends State<WordPage> {
                       personality: personality,
                       child: PoiseScope(
                         motion: personality.motion,
-                        child: demoFor(widget.word, _play),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            LaneCurve(
+                              word: widget.word,
+                              color: personality.color,
+                              windowMicros: _curveWindow,
+                            ),
+                            demoFor(widget.word, _play),
+                          ],
+                        ),
                       ),
                     ),
                   ),
