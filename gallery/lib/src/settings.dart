@@ -87,7 +87,7 @@ final class GalleryControls extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings = GallerySettingsScope.of(context);
     return Wrap(
-      spacing: 8,
+      spacing: 6,
       runSpacing: 8,
       children: [
         FilterChip(
