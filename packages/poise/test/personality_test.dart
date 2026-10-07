@@ -45,4 +45,14 @@ void main() {
       }
     });
   });
+
+  test('copyWith changes one word and keeps the rest', () {
+    const slowerEnter = Move(perceivedDuration: Duration(milliseconds: 500));
+    final adjusted = PoiseMotion.calm.copyWith(enter: slowerEnter);
+
+    expect(adjusted.enter, same(slowerEnter));
+    expect(adjusted.exit, same(PoiseMotion.calm.exit));
+    expect(adjusted.follow, same(PoiseMotion.calm.follow));
+    expect(adjusted.stagger, PoiseMotion.calm.stagger);
+  });
 }

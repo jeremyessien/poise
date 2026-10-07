@@ -40,4 +40,28 @@ final class PoiseMotion {
     loop: Fade(duration: Duration(milliseconds: 1200)),
     stagger: Duration(milliseconds: 40),
   );
+
+  PoiseMotion copyWith({
+    Feel? feedback,
+    Feel? enter,
+    Feel? exit,
+    Feel? transition,
+    Feel? change,
+    Feel? attention,
+    Feel? celebrate,
+    Move? follow,
+    Feel? loop,
+    Duration? stagger,
+  }) => PoiseMotion(
+    feedback: feedback ?? this.feedback,
+    enter: enter ?? this.enter,
+    exit: exit ?? this.exit,
+    transition: transition ?? this.transition,
+    change: change ?? this.change,
+    attention: attention ?? this.attention,
+    celebrate: celebrate ?? this.celebrate,
+    follow: follow ?? this.follow,
+    loop: loop ?? this.loop,
+    stagger: stagger ?? this.stagger,
+  );
 }
