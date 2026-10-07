@@ -1,6 +1,9 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/physics.dart';
 
+/// How something moves: either a [Move] (a spring) or a [Fade].
+///
+/// Every feel can hand Flutter's animated widgets a [duration] and a [curve].
 sealed class Feel {
   const Feel();
 
@@ -8,6 +11,10 @@ sealed class Feel {
   Curve get curve;
 }
 
+/// A spring, for anything that changes position, size or rotation.
+///
+/// Described the way people picture it: how long it looks like it takes,
+/// and how much it overshoots, from 0 (no bounce) to about 0.5 (very bouncy).
 final class Move extends Feel {
   const Move({required this.perceivedDuration, this.bounce = 0})
     : assert(bounce >= 0 && bounce < 1);
@@ -15,6 +22,7 @@ final class Move extends Feel {
   final Duration perceivedDuration;
   final double bounce;
 
+  /// The real spring, for gestures that need to carry on from a finger's speed.
   SpringDescription get spring => SpringDescription.withDurationAndBounce(
     duration: perceivedDuration,
     bounce: bounce,
@@ -23,6 +31,9 @@ final class Move extends Feel {
   @override
   Duration get duration => settleDuration;
 
+  /// How long the spring takes to actually stop, which is longer than
+  /// [perceivedDuration] because of the tail. Animations run this long so a
+  /// bounce is never cut off and snapped onto its target.
   Duration get settleDuration =>
       _settleDurations[(perceivedDuration, bounce)] ??= _measureSettle(spring);
 
@@ -51,6 +62,7 @@ final class Move extends Feel {
   }
 }
 
+/// A duration and a curve, for colour and opacity. Fades never overshoot.
 final class Fade extends Feel {
   const Fade({required this.duration, this.curve = Curves.easeOutCubic});
 
