@@ -42,7 +42,18 @@ void main() {
     }
   });
 
-  for (final word in [MotionWord.enter, MotionWord.exit]) {
+  const movingWords = [
+    MotionWord.feedback,
+    MotionWord.enter,
+    MotionWord.exit,
+    MotionWord.transition,
+    MotionWord.attention,
+    MotionWord.celebrate,
+    MotionWord.follow,
+    MotionWord.stagger,
+  ];
+
+  for (final word in movingWords) {
     testWidgets('Play moves all three ${word.name} lanes at once', (
       tester,
     ) async {
@@ -78,8 +89,53 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('words without a demo yet say so', (tester) async {
-    await pumpPage(tester, MotionWord.celebrate);
-    expect(find.text('Demo coming soon'), findsNWidgets(3));
+  testWidgets('every word plays without errors', (tester) async {
+    for (final word in MotionWord.values) {
+      await pumpPage(tester, word);
+      await tester.tap(find.text('Play'));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(tester.takeException(), isNull, reason: word.name);
+      await tester.tap(find.text('Play'));
+      await tester.pumpAndSettle();
+    }
+  });
+
+  testWidgets('loop holds still when motion is reduced', (tester) async {
+    settings.reduceMotion = true;
+    await pumpPage(tester, MotionWord.loop);
+    final before = objectPositions(tester);
+    double opacityOf(Personality personality) => tester
+        .widget<FadeTransition>(
+          find
+              .ancestor(
+                of: find.byKey(ValueKey('lane-object-${personality.label}')),
+                matching: find.byType(FadeTransition),
+              )
+              .first,
+        )
+        .opacity
+        .value;
+
+    await tester.tap(find.text('Play'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(objectPositions(tester), before);
+    for (final personality in Personality.values) {
+      expect(opacityOf(personality), 1, reason: personality.label);
+    }
+  });
+
+  testWidgets('a dragged object springs back to rest', (tester) async {
+    await pumpPage(tester, MotionWord.follow);
+    final object = find.byKey(const ValueKey('lane-object-calm'));
+    final rest = tester.getTopLeft(object);
+
+    await tester.drag(object, const Offset(0, 60));
+    await tester.pump();
+    expect(tester.getTopLeft(object), isNot(rest));
+
+    await tester.pumpAndSettle();
+    expect(tester.getTopLeft(object).dy, closeTo(rest.dy, 0.5));
   });
 }
