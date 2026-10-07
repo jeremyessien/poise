@@ -1,49 +1,95 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:poise/poise.dart';
 
+Duration feltDuration(Feel feel) => switch (feel) {
+  Move(:final perceivedDuration) => perceivedDuration,
+  Fade(:final duration) => duration,
+};
+
+bool bounces(Feel feel) => switch (feel) {
+  Move(:final bounce) => bounce > 0,
+  Fade() => false,
+};
+
+Map<String, Feel> timedWords(PoiseMotion motion) => {
+  'feedback': motion.feedback,
+  'enter': motion.enter,
+  'exit': motion.exit,
+  'transition': motion.transition,
+  'change': motion.change,
+  'attention': motion.attention,
+  'celebrate': motion.celebrate,
+};
+
 void main() {
-  group('calm', () {
-    const calm = PoiseMotion.calm;
+  const personalities = {
+    'calm': PoiseMotion.calm,
+    'crisp': PoiseMotion.crisp,
+    'playful': PoiseMotion.playful,
+  };
 
-    final timedWords = {
-      'feedback': calm.feedback,
-      'enter': calm.enter,
-      'exit': calm.exit,
-      'transition': calm.transition,
-      'change': calm.change,
-      'attention': calm.attention,
-      'celebrate': calm.celebrate,
-    };
+  for (final MapEntry(key: name, value: motion) in personalities.entries) {
+    group('$name keeps the promises every personality makes:', () {
+      test('things leave faster than they arrive', () {
+        expect(motion.exit.duration, lessThan(motion.enter.duration));
+      });
 
-    test('things leave faster than they arrive', () {
-      expect(calm.exit.duration, lessThan(calm.enter.duration));
+      test('feedback feels like the quickest motion', () {
+        for (final MapEntry(key: word, value: feel) in timedWords(
+          motion,
+        ).entries) {
+          if (word == 'feedback') continue;
+          expect(
+            feltDuration(motion.feedback),
+            lessThanOrEqualTo(feltDuration(feel)),
+            reason: word,
+          );
+        }
+      });
+
+      test('exits never bounce', () {
+        expect(bounces(motion.exit), isFalse);
+      });
     });
+  }
 
-    test('feedback feels like the quickest motion', () {
-      Duration feltDuration(Feel feel) => switch (feel) {
-        Move(:final perceivedDuration) => perceivedDuration,
-        Fade(:final duration) => duration,
-      };
+  for (final (name, motion) in [
+    ('calm', PoiseMotion.calm),
+    ('crisp', PoiseMotion.crisp),
+  ]) {
+    test('$name bounces only for attention', () {
+      for (final MapEntry(key: word, value: feel) in timedWords(
+        motion,
+      ).entries) {
+        expect(bounces(feel), word == 'attention', reason: word);
+      }
+    });
+  }
 
-      for (final MapEntry(key: word, value: feel) in timedWords.entries) {
-        if (word == 'feedback') continue;
+  test('crisp is quicker than calm everywhere', () {
+    final calm = timedWords(PoiseMotion.calm);
+    for (final MapEntry(key: word, value: crispFeel) in timedWords(
+      PoiseMotion.crisp,
+    ).entries) {
+      if (calm[word] case final calmFeel?) {
         expect(
-          feltDuration(calm.feedback),
-          lessThanOrEqualTo(feltDuration(feel)),
+          feltDuration(crispFeel),
+          lessThan(feltDuration(calmFeel)),
           reason: word,
         );
+      } else {
+        fail('calm has no $word');
       }
-    });
+    }
+  });
 
-    test('only attention bounces', () {
-      for (final MapEntry(key: word, value: feel) in timedWords.entries) {
-        final bounces = switch (feel) {
-          Move(:final bounce) => bounce > 0,
-          Fade() => false,
-        };
-        expect(bounces, word == 'attention', reason: word);
-      }
-    });
+  test('playful bounces on touch, arrival and celebration', () {
+    const playful = PoiseMotion.playful;
+    expect([
+      playful.feedback,
+      playful.enter,
+      playful.celebrate,
+    ], everyElement(predicate<Feel>(bounces, 'bounces')));
   });
 
   group('reduced', () {
