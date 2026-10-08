@@ -40,6 +40,15 @@ final class Move extends Feel {
   @override
   Curve get curve => _SpringCurve(spring, settleDuration);
 
+  @override
+  bool operator ==(Object other) =>
+      other is Move &&
+      other.perceivedDuration == perceivedDuration &&
+      other.bounce == bounce;
+
+  @override
+  int get hashCode => Object.hash(perceivedDuration, bounce);
+
   static final Map<(Duration, double), Duration> _settleDurations = {};
 
   static const _settledWithin = Tolerance(velocity: 0.01);
@@ -71,6 +80,13 @@ final class Fade extends Feel {
 
   @override
   final Curve curve;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Fade && other.duration == duration && other.curve == curve;
+
+  @override
+  int get hashCode => Object.hash(duration, curve);
 }
 
 final class _SpringCurve extends Curve {

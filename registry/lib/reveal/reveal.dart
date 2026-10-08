@@ -63,7 +63,7 @@ final class _RevealState extends State<Reveal>
       _settledIn = true;
       _feel = _motion.enter;
       if (widget.visible && widget.revealOnFirstBuild) _animate(visible: true);
-    } else if (!identical(previous, _motion) && _shown.isAnimating) {
+    } else if (previous != _motion && _shown.isAnimating) {
       _animate(visible: widget.visible);
     }
   }

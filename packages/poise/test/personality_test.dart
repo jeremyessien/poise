@@ -11,14 +11,18 @@ bool bounces(Feel feel) => switch (feel) {
   Fade() => false,
 };
 
-Map<String, Feel> timedWords(PoiseMotion motion) => {
-  'feedback': motion.feedback,
-  'enter': motion.enter,
-  'exit': motion.exit,
-  'transition': motion.transition,
-  'change': motion.change,
-  'attention': motion.attention,
-  'celebrate': motion.celebrate,
+const timed = [
+  MotionWord.feedback,
+  MotionWord.enter,
+  MotionWord.exit,
+  MotionWord.transition,
+  MotionWord.change,
+  MotionWord.attention,
+  MotionWord.celebrate,
+];
+
+Map<MotionWord, Feel> timedWords(PoiseMotion motion) => {
+  for (final word in timed) word: motion.feelOf(word)!,
 };
 
 void main() {
@@ -38,11 +42,11 @@ void main() {
         for (final MapEntry(key: word, value: feel) in timedWords(
           motion,
         ).entries) {
-          if (word == 'feedback') continue;
+          if (word == MotionWord.feedback) continue;
           expect(
             feltDuration(motion.feedback),
             lessThanOrEqualTo(feltDuration(feel)),
-            reason: word,
+            reason: word.name,
           );
         }
       });
@@ -61,7 +65,7 @@ void main() {
       for (final MapEntry(key: word, value: feel) in timedWords(
         motion,
       ).entries) {
-        expect(bounces(feel), word == 'attention', reason: word);
+        expect(bounces(feel), word == MotionWord.attention, reason: word.name);
       }
     });
   }
@@ -71,15 +75,11 @@ void main() {
     for (final MapEntry(key: word, value: crispFeel) in timedWords(
       PoiseMotion.crisp,
     ).entries) {
-      if (calm[word] case final calmFeel?) {
-        expect(
-          feltDuration(crispFeel),
-          lessThan(feltDuration(calmFeel)),
-          reason: word,
-        );
-      } else {
-        fail('calm has no $word');
-      }
+      expect(
+        feltDuration(crispFeel),
+        lessThan(feltDuration(calm[word]!)),
+        reason: word.name,
+      );
     }
   });
 
@@ -96,17 +96,11 @@ void main() {
     const reduced = PoiseMotion.reduced;
 
     test('nothing travels except what the finger is driving', () {
-      final timed = [
-        reduced.feedback,
-        reduced.enter,
-        reduced.exit,
-        reduced.transition,
-        reduced.change,
-        reduced.attention,
-        reduced.celebrate,
-        reduced.loop,
-      ];
-      expect(timed, everyElement(isA<Fade>()));
+      final feels = [
+        for (final word in MotionWord.values)
+          if (word != MotionWord.follow) reduced.feelOf(word),
+      ]..removeWhere((feel) => feel == null);
+      expect(feels, everyElement(isA<Fade>()));
     });
 
     test('a released drag settles without bouncing', () {
@@ -123,11 +117,32 @@ void main() {
     });
   });
 
+  test('every word except stagger has a feel', () {
+    for (final word in MotionWord.values) {
+      expect(
+        PoiseMotion.calm.feelOf(word),
+        word == MotionWord.stagger ? isNull : isA<Feel>(),
+        reason: word.name,
+      );
+    }
+  });
+
   test('copyWith keeps a reduced personality reduced', () {
     final adjusted = PoiseMotion.reduced.copyWith(
       stagger: const Duration(milliseconds: 10),
     );
     expect(adjusted.reducesMotion, isTrue);
+  });
+
+  test('two personalities with the same feels are equal', () {
+    PoiseMotion adjusted() => PoiseMotion.calm.copyWith(
+      enter: const Move(perceivedDuration: Duration(milliseconds: 500)),
+      change: const Fade(duration: Duration(milliseconds: 180)),
+    );
+    expect(adjusted(), equals(adjusted()));
+    expect(adjusted().hashCode, adjusted().hashCode);
+    expect(adjusted(), isNot(equals(PoiseMotion.calm)));
+    expect(PoiseMotion.reduced.copyWith(), equals(PoiseMotion.reduced));
   });
 
   test('copyWith changes one word and keeps the rest', () {

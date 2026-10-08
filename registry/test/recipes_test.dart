@@ -1,20 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:poise/poise.dart';
 import 'package:yaml/yaml.dart';
 
-const motionWords = {
-  'feedback',
-  'enter',
-  'exit',
-  'transition',
-  'change',
-  'attention',
-  'celebrate',
-  'follow',
-  'loop',
-  'stagger',
-};
+final motionWords = {for (final word in MotionWord.values) word.name};
 
 void main() {
   final recipeFolders =

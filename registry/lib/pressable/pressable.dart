@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:poise/poise.dart';
 
 /// Makes any widget respond to a press using the `feedback` motion word.

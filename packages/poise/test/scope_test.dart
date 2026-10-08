@@ -47,6 +47,29 @@ void main() {
     expect(seen, same(quickEnter));
   });
 
+  testWidgets('does not tell dependants about an equal personality', (
+    tester,
+  ) async {
+    var builds = 0;
+    final counter = Builder(
+      builder: (context) {
+        context.motion;
+        builds++;
+        return const SizedBox();
+      },
+    );
+    PoiseMotion adjusted() => PoiseMotion.calm.copyWith(
+      enter: const Move(perceivedDuration: Duration(milliseconds: 600)),
+    );
+
+    await tester.pumpWidget(PoiseScope(motion: adjusted(), child: counter));
+    await tester.pumpWidget(PoiseScope(motion: adjusted(), child: counter));
+    expect(builds, 1);
+
+    await tester.pumpWidget(PoiseScope(motion: quickEnter, child: counter));
+    expect(builds, 2);
+  });
+
   testWidgets('switches to reduced when the phone asks for less motion', (
     tester,
   ) async {
