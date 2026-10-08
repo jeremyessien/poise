@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'gather/gather_screen.dart';
 import 'home_page.dart';
 import 'settings.dart';
 import 'theme.dart';
@@ -22,9 +23,12 @@ final class GalleryApp extends StatelessWidget {
     ),
     onGenerateRoute: (route) => MaterialPageRoute<void>(
       settings: route,
-      builder: (context) => switch (MotionWord.fromPath(route.name ?? '/')) {
-        final word? => WordPage(word: word),
-        null => const HomePage(),
+      builder: (context) => switch (route.name ?? '/') {
+        '/poise' => const HomePage(),
+        final path => switch (MotionWord.fromPath(path)) {
+          final word? => WordPage(word: word),
+          null => const GatherScreen(),
+        },
       },
     ),
   );
