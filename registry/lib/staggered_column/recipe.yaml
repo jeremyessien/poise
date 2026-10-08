@@ -1,0 +1,8 @@
+name: staggered_column
+title: StaggeredColumn
+summary: A column whose children arrive one after another, spaced by the personality's stagger gap.
+words: [stagger, enter]
+files:
+  - staggered_column.dart
+needs: [reveal]
+since: 0.1.0
