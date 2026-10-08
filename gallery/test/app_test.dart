@@ -25,7 +25,7 @@ void main() {
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
     await pumpApp(tester);
-    navigator(tester).pushNamed('/poise');
+    navigator(tester).pushNamed('/words');
     await tester.pumpAndSettle();
     for (final word in MotionWord.values) {
       expect(find.text(word.name), findsOneWidget, reason: word.name);
@@ -35,7 +35,7 @@ void main() {
 
   testWidgets('tapping a word opens its page', (tester) async {
     await pumpApp(tester);
-    navigator(tester).pushNamed('/poise');
+    navigator(tester).pushNamed('/words');
     await tester.pumpAndSettle();
     await tester.tap(find.text(MotionWord.enter.description));
     await tester.pumpAndSettle();
