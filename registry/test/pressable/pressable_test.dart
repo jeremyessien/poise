@@ -82,4 +82,31 @@ void main() {
     expect(fade.opacity.value, lessThan(1));
     await press.up();
   });
+
+  testWidgets('buttons inside it stay reachable for screen readers', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Center(
+          child: Pressable(
+            semanticLabel: 'Open event',
+            onTap: () {},
+            child: Semantics(
+              button: true,
+              label: 'Save to plans',
+              onTap: () {},
+              child: const SizedBox(width: 40, height: 40),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.bySemanticsLabel('Open event'), findsOneWidget);
+    expect(find.bySemanticsLabel('Save to plans'), findsOneWidget);
+    semantics.dispose();
+  });
 }

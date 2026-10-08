@@ -10,14 +10,16 @@ final class Pressable extends StatefulWidget {
   const Pressable({
     super.key,
     required this.onTap,
-    required this.semanticLabel,
     required this.child,
+    this.semanticLabel,
   });
 
   final VoidCallback onTap;
 
-  /// What a screen reader announces for this button.
-  final String semanticLabel;
+  /// What a screen reader announces for this button. Leave it out when the
+  /// child's own text already says it. Buttons inside the child stay
+  /// reachable either way.
+  final String? semanticLabel;
   final Widget child;
 
   @override
@@ -54,10 +56,10 @@ final class _PressableState extends State<Pressable>
     final travels = _feel is Move;
 
     return Semantics(
+      container: true,
       button: true,
       label: widget.semanticLabel,
       onTap: widget.onTap,
-      excludeSemantics: true,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTapDown: (_) => _down(),
