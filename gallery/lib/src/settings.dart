@@ -6,7 +6,6 @@ final class GallerySettings extends ChangeNotifier {
 
   bool _slowMotion = false;
   bool _reduceMotion = false;
-  bool _showCurve = false;
   bool _showTouches = false;
   int _toursRequested = 0;
 
@@ -22,13 +21,6 @@ final class GallerySettings extends ChangeNotifier {
   set reduceMotion(bool value) {
     if (value == _reduceMotion) return;
     _reduceMotion = value;
-    notifyListeners();
-  }
-
-  bool get showCurve => _showCurve;
-  set showCurve(bool value) {
-    if (value == _showCurve) return;
-    _showCurve = value;
     notifyListeners();
   }
 
@@ -94,34 +86,4 @@ final class GallerySettingsScope extends StatelessWidget {
 
 final class _SettingsNotifier extends InheritedNotifier<GallerySettings> {
   const _SettingsNotifier({required super.notifier, required super.child});
-}
-
-final class GalleryControls extends StatelessWidget {
-  const GalleryControls({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final settings = GallerySettingsScope.of(context);
-    return Wrap(
-      spacing: 6,
-      runSpacing: 8,
-      children: [
-        FilterChip(
-          label: const Text('Slow motion'),
-          selected: settings.slowMotion,
-          onSelected: (value) => settings.slowMotion = value,
-        ),
-        FilterChip(
-          label: const Text('Reduce motion'),
-          selected: settings.reduceMotion,
-          onSelected: (value) => settings.reduceMotion = value,
-        ),
-        FilterChip(
-          label: const Text('Show curve'),
-          selected: settings.showCurve,
-          onSelected: (value) => settings.showCurve = value,
-        ),
-      ],
-    );
-  }
 }

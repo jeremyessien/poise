@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gallery/src/settings.dart';
-import 'package:gallery/src/theme.dart';
 import 'package:poise/poise.dart';
 
 void main() {
@@ -16,67 +14,52 @@ void main() {
     timeDilation = 1;
   });
 
-  Future<void> pumpGallery(WidgetTester tester) => tester.pumpWidget(
-    MaterialApp(
-      theme: galleryTheme(),
-      builder: (context, child) => GallerySettingsScope(
+  Future<void> pumpScope(WidgetTester tester) => tester.pumpWidget(
+    MediaQuery(
+      data: const MediaQueryData(),
+      child: GallerySettingsScope(
         settings: settings,
-        child: child ?? const SizedBox.shrink(),
-      ),
-      home: Scaffold(
-        body: Column(
-          children: [
-            const GalleryControls(),
-            Builder(
-              builder: (context) {
-                seenMotion = context.motion;
-                return const SizedBox();
-              },
-            ),
-          ],
+        child: Builder(
+          builder: (context) {
+            seenMotion = context.motion;
+            return const SizedBox();
+          },
         ),
       ),
     ),
   );
 
-  testWidgets('slow motion stretches every animation', (tester) async {
-    await pumpGallery(tester);
-    await tester.tap(find.text('Slow motion'));
-    await tester.pump();
+  test('slow motion stretches every animation', () {
+    settings.slowMotion = true;
     expect(timeDilation, GallerySettings.slowMotionFactor);
-
-    await tester.tap(find.text('Slow motion'));
-    await tester.pump();
+    settings.slowMotion = false;
     expect(timeDilation, 1);
   });
 
   testWidgets('reduce motion makes context.motion reduced', (tester) async {
-    await pumpGallery(tester);
+    await pumpScope(tester);
     expect(seenMotion, same(PoiseMotion.calm));
 
-    await tester.tap(find.text('Reduce motion'));
+    settings.reduceMotion = true;
     await tester.pump();
     expect(seenMotion, same(PoiseMotion.reduced));
 
-    await tester.tap(find.text('Reduce motion'));
+    settings.reduceMotion = false;
     await tester.pump();
     expect(seenMotion, same(PoiseMotion.calm));
   });
 
-  testWidgets('show curve flips its flag', (tester) async {
-    await pumpGallery(tester);
-    await tester.tap(find.text('Show curve'));
-    expect(settings.showCurve, isTrue);
+  test('show touches flips its flag and tells listeners', () {
+    var told = 0;
+    settings.addListener(() => told++);
+    settings.showTouches = true;
+    expect(settings.showTouches, isTrue);
+    expect(told, 1);
   });
 
-  testWidgets('a switched-on chip keeps its label readable', (tester) async {
-    await pumpGallery(tester);
-    await tester.tap(find.text('Reduce motion'));
-    await tester.pump();
-
-    final label = tester.renderObject<RenderParagraph>(
-      find.text('Reduce motion'),
-    );
-    expect(label.text.style?.color, GalleryColors.paper);
+  test('requesting a tour counts up', () {
+    settings.requestTour();
+    settings.requestTour();
+    expect(settings.toursRequested, 2);
   });
 }
