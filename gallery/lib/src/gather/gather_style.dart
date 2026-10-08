@@ -53,6 +53,13 @@ abstract final class GatherType {
   static const dial = TextStyle(fontSize: 15, fontWeight: FontWeight.w600);
 }
 
+final gatherTheme = ThemeData(
+  scaffoldBackgroundColor: GatherColors.background,
+  colorScheme: ColorScheme.fromSeed(seedColor: GatherColors.accent),
+);
+
+/// Makes everything below it look like Gather, including text, so a recipe's
+/// stage inside the gallery reads in the same face as the app itself.
 final class GatherTheme extends StatelessWidget {
   const GatherTheme({super.key, required this.child});
 
@@ -60,10 +67,10 @@ final class GatherTheme extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Theme(
-    data: ThemeData(
-      scaffoldBackgroundColor: GatherColors.background,
-      colorScheme: ColorScheme.fromSeed(seedColor: GatherColors.accent),
+    data: gatherTheme,
+    child: DefaultTextStyle.merge(
+      style: gatherTheme.textTheme.bodyMedium,
+      child: child,
     ),
-    child: child,
   );
 }

@@ -7,7 +7,6 @@ final class GallerySettings extends ChangeNotifier {
   bool _slowMotion = false;
   bool _reduceMotion = false;
   bool _showTouches = false;
-  int _toursRequested = 0;
 
   bool get slowMotion => _slowMotion;
   set slowMotion(bool value) {
@@ -28,13 +27,6 @@ final class GallerySettings extends ChangeNotifier {
   set showTouches(bool value) {
     if (value == _showTouches) return;
     _showTouches = value;
-    notifyListeners();
-  }
-
-  int get toursRequested => _toursRequested;
-
-  void requestTour() {
-    _toursRequested++;
     notifyListeners();
   }
 

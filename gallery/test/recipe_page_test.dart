@@ -4,13 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gallery/src/code_block.dart';
+import 'package:gallery/src/gather/gather_style.dart';
 import 'package:gallery/src/gather/personality_dial.dart';
 import 'package:gallery/src/recipe_curves.dart';
 import 'package:gallery/src/recipe_page.dart';
+import 'package:gallery/src/recipe_stages.dart';
 import 'package:gallery/src/recipes.dart';
 import 'package:gallery/src/settings.dart';
 import 'package:gallery/src/theme.dart';
 import 'package:poise/poise.dart';
+import 'package:yaml/yaml.dart';
 
 void main() {
   late GallerySettings settings;
@@ -24,7 +27,7 @@ void main() {
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
       MaterialApp(
-        theme: galleryTheme(),
+        theme: galleryTheme,
         builder: (context, child) => GallerySettingsScope(
           settings: settings,
           child: child ?? const SizedBox.shrink(),
@@ -35,14 +38,39 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  test('every recipe points at a real registry folder', () {
+  test('every recipe mirrors its manifest in the registry', () {
     for (final recipe in GalleryRecipe.values) {
+      final manifest = File('../registry/lib/${recipe.folder}/recipe.yaml');
+      expect(manifest.existsSync(), isTrue, reason: recipe.folder);
+      final facts = loadYaml(manifest.readAsStringSync()) as YamlMap;
+      expect(recipe.title, facts['title'], reason: recipe.folder);
+      expect(recipe.summary, facts['summary'], reason: recipe.folder);
       expect(
-        Directory('../registry/lib/${recipe.folder}').existsSync(),
-        isTrue,
+        recipe.words.map((word) => word.name),
+        orderedEquals(facts['words'] as YamlList),
         reason: recipe.folder,
       );
     }
+  });
+
+  testWidgets('the stage reads in Gather\'s face, not the gallery\'s', (
+    tester,
+  ) async {
+    await pumpPage(tester, GalleryRecipe.pressable);
+    final onStage = tester.element(
+      find.descendant(
+        of: find.byType(RecipeStage),
+        matching: find.text('Press and hold either one'),
+      ),
+    );
+    expect(
+      DefaultTextStyle.of(onStage).style.fontFamily,
+      gatherTheme.textTheme.bodyMedium!.fontFamily,
+    );
+    expect(
+      DefaultTextStyle.of(onStage).style.fontFamily,
+      isNot(galleryTheme.textTheme.bodyMedium!.fontFamily),
+    );
   });
 
   for (final recipe in GalleryRecipe.values) {

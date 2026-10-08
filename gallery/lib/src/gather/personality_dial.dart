@@ -12,19 +12,8 @@ final class PersonalityDial extends StatefulWidget {
     required this.onChanged,
   });
 
-  static const segmentWidth = 92.0;
-  static const inset = 4.0;
-
   final Personality selected;
   final ValueChanged<Personality> onChanged;
-
-  static Offset segmentCentre(RenderBox dial, Personality personality) =>
-      dial.localToGlobal(
-        Offset(
-          inset + segmentWidth * (personality.index + 0.5),
-          dial.size.height / 2,
-        ),
-      );
 
   @override
   State<PersonalityDial> createState() => _PersonalityDialState();
@@ -32,9 +21,9 @@ final class PersonalityDial extends StatefulWidget {
 
 final class _PersonalityDialState extends State<PersonalityDial>
     with SingleTickerProviderStateMixin {
-  static const _segmentWidth = PersonalityDial.segmentWidth;
+  static const _segmentWidth = 92.0;
   static const _height = 44.0;
-  static const _inset = PersonalityDial.inset;
+  static const _inset = 4.0;
 
   late final AnimationController _position = AnimationController.unbounded(
     vsync: this,

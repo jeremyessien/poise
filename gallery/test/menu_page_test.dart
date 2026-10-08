@@ -1,10 +1,13 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gallery/src/app.dart';
-import 'package:gallery/src/words_page.dart';
+import 'package:gallery/src/gather/gather_screen.dart';
+import 'package:gallery/src/menu_page.dart';
 import 'package:gallery/src/recipe_page.dart';
 import 'package:gallery/src/recipes.dart';
 import 'package:gallery/src/settings.dart';
+import 'package:gallery/src/tour_overlay.dart';
+import 'package:gallery/src/words_page.dart';
 
 void main() {
   late GallerySettings settings;
@@ -54,17 +57,40 @@ void main() {
     semantics.dispose();
   });
 
-  testWidgets('the switches change the settings', (tester) async {
+  testWidgets('tapping a switch row changes its setting', (tester) async {
     final semantics = tester.ensureSemantics();
     await openMenu(tester);
-    await tester.tap(find.byType(CupertinoSwitch).at(1));
+    await tester.tap(find.text('Reduce motion'));
     await tester.pumpAndSettle();
     expect(settings.reduceMotion, isTrue);
 
-    await tester.tap(find.byType(CupertinoSwitch).first);
+    await tester.tap(find.text('Show touches'));
+    await tester.pumpAndSettle();
+    expect(settings.showTouches, isTrue);
+
+    await tester.tap(find.text('Slow motion'));
     await tester.pump();
     expect(settings.slowMotion, isTrue);
     settings.slowMotion = false;
+    semantics.dispose();
+  });
+
+  testWidgets('the tour row goes home and starts the tour', (tester) async {
+    final semantics = tester.ensureSemantics();
+    await openMenu(tester);
+    final tour = GalleryTourScope.of(tester.element(find.byType(MenuPage)));
+    await tester.tap(find.text('Play the tour'));
+    await tester.pumpAndSettle();
+
+    expect(tour.isRunning, isTrue);
+    expect(find.byType(MenuPage), findsNothing);
+    expect(find.byType(GatherScreen), findsOneWidget);
+    expect(settings.showTouches, isTrue);
+
+    tour.stop();
+    await tester.pumpAndSettle();
+    expect(tour.isRunning, isFalse);
+    expect(settings.showTouches, isFalse);
     semantics.dispose();
   });
 }

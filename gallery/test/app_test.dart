@@ -20,7 +20,7 @@ void main() {
   NavigatorState navigator(WidgetTester tester) =>
       tester.state<NavigatorState>(find.byType(Navigator));
 
-  testWidgets('the poise page lists every word', (tester) async {
+  testWidgets('the words page lists every word', (tester) async {
     tester.view.physicalSize = const Size(1200, 9000);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);

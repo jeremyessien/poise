@@ -13,16 +13,29 @@ abstract final class GalleryColors {
 }
 
 enum Personality {
-  calm('calm', PoiseMotion.calm, GalleryColors.calm),
-  crisp('crisp', PoiseMotion.crisp, GalleryColors.crisp),
-  playful('playful', PoiseMotion.playful, GalleryColors.playful);
+  calm('calm', 'Settled and quiet', PoiseMotion.calm, GalleryColors.calm),
+  crisp('crisp', 'Quick and exact', PoiseMotion.crisp, GalleryColors.crisp),
+  playful(
+    'playful',
+    'Springy and alive',
+    PoiseMotion.playful,
+    GalleryColors.playful,
+  );
 
-  const Personality(this.label, this.motion, this.color);
+  const Personality(this.label, this.tagline, this.motion, this.color);
 
   final String label;
+  final String tagline;
   final PoiseMotion motion;
   final Color color;
 }
+
+/// The raised panel everything on chart paper sits in.
+BoxDecoration cardDecoration({double radius = 16}) => BoxDecoration(
+  color: GalleryColors.lane,
+  borderRadius: BorderRadius.circular(radius),
+  border: Border.all(color: GalleryColors.grid),
+);
 
 abstract final class GalleryType {
   static const _sans = 'Instrument Sans';
@@ -67,30 +80,13 @@ abstract final class GalleryType {
   );
 }
 
-ThemeData galleryTheme() => ThemeData(
+final galleryTheme = ThemeData(
   scaffoldBackgroundColor: GalleryColors.paper,
   fontFamily: GalleryType.body.fontFamily,
   colorScheme: ColorScheme.fromSeed(
     seedColor: GalleryColors.ink,
     surface: GalleryColors.paper,
     onSurface: GalleryColors.ink,
-  ),
-  chipTheme: ChipThemeData(
-    backgroundColor: GalleryColors.paper,
-    selectedColor: GalleryColors.ink,
-    showCheckmark: false,
-    padding: const EdgeInsets.symmetric(horizontal: 6),
-    labelPadding: const EdgeInsets.symmetric(horizontal: 4),
-    labelStyle: GalleryType.label.copyWith(
-      fontSize: 13,
-      color: WidgetStateColor.resolveWith(
-        (states) => states.contains(WidgetState.selected)
-            ? GalleryColors.paper
-            : GalleryColors.ink,
-      ),
-    ),
-    side: const BorderSide(color: GalleryColors.ink),
-    shape: const StadiumBorder(),
   ),
   filledButtonTheme: FilledButtonThemeData(
     style: FilledButton.styleFrom(

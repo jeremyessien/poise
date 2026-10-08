@@ -5,7 +5,6 @@ import 'package:gallery/src/gather/events.dart';
 import 'package:gallery/src/gather/gather_screen.dart';
 import 'package:gallery/src/settings.dart';
 import 'package:gallery/src/touches.dart';
-import 'package:gallery/src/words.dart';
 import 'package:poise/poise.dart';
 import 'package:poise_registry/reveal/reveal.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
@@ -95,30 +94,30 @@ void main() {
     semantics.dispose();
   });
 
-  testWidgets('the tour presses, saves and turns the dial by itself', (
+  testWidgets('in slow motion the toast stays as long as its springs do', (
     tester,
   ) async {
     final semantics = tester.ensureSemantics();
+    settings.slowMotion = true;
     await pumpGather(tester);
-    final seen = <PoiseMotion>{};
+    await tester.tap(find.bySemanticsLabel('Save to plans').first);
+    await tester.pump();
 
-    final captioned = <String>{};
-    settings.requestTour();
-    for (var frame = 0; frame < 1400; frame++) {
-      await tester.pump(const Duration(milliseconds: 16));
-      seen.add(motionOf(tester));
-      for (final word in MotionWord.values) {
-        if (find.text(word.name).evaluate().isNotEmpty) {
-          captioned.add(word.name);
-        }
-      }
-    }
+    Reveal toast() => tester.widget<Reveal>(
+      find
+          .ancestor(
+            of: find.text('Saved to your plans'),
+            matching: find.byType(Reveal),
+          )
+          .first,
+    );
+    await tester.pump(const Duration(seconds: 2));
+    expect(toast().visible, isTrue);
+
+    await tester.pump(const Duration(seconds: 8));
+    expect(toast().visible, isFalse);
     await tester.pumpAndSettle();
-
-    expect(seen, containsAll([PoiseMotion.crisp, PoiseMotion.playful]));
-    expect(captioned, containsAll(['feedback', 'enter', 'exit', 'stagger']));
-    expect(motionOf(tester), same(PoiseMotion.calm));
-    expect(find.bySemanticsLabel('Remove from plans'), findsOneWidget);
+    settings.slowMotion = false;
     semantics.dispose();
   });
 

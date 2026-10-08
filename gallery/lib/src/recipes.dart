@@ -1,10 +1,12 @@
 import 'words.dart';
 
+/// The recipes the gallery shows. Their facts mirror each recipe's
+/// `recipe.yaml` in the registry, and a test keeps the two in step.
 enum GalleryRecipe {
   pressable(
     'Pressable',
-    'Any widget answers a press, and dims instead of shrinking when motion '
-        'is reduced.',
+    'Makes any widget respond to a press, and dims instead of shrinking when '
+        'the phone asks for less motion.',
     [MotionWord.feedback],
     '''
 Pressable(
@@ -14,8 +16,8 @@ Pressable(
   ),
   reveal(
     'Reveal',
-    'Comes in and goes away on springs that turn around smoothly if you '
-        'change your mind halfway.',
+    'Brings a widget in and takes it away on springs that turn around '
+        'smoothly if you change your mind halfway.',
     [MotionWord.enter, MotionWord.exit],
     '''
 Reveal(
@@ -25,7 +27,8 @@ Reveal(
   ),
   staggeredColumn(
     'StaggeredColumn',
-    'Children arrive one after another, spaced by the personality\'s gap.',
+    'A column whose children arrive one after another, spaced by the '
+        'personality\'s stagger gap.',
     [MotionWord.stagger, MotionWord.enter],
     '''
 StaggeredColumn(

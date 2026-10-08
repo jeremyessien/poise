@@ -6,6 +6,7 @@ import 'package:poise_registry/staggered_column/staggered_column.dart';
 import 'gather/event_card.dart';
 import 'gather/events.dart';
 import 'gather/gather_style.dart';
+import 'gather/gather_toast.dart';
 import 'recipes.dart';
 
 final class RecipeStage extends StatelessWidget {
@@ -72,7 +73,10 @@ final class _RevealStageState extends State<_RevealStage> {
       SizedBox(
         height: 200,
         child: Center(
-          child: Reveal(visible: _shown, child: const SavedToast()),
+          child: Reveal(
+            visible: _shown,
+            child: const GatherToast(text: 'Saved to your plans'),
+          ),
         ),
       ),
       StageButton(
@@ -143,34 +147,6 @@ final class _EventRow extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(child: Text(event.title, style: GatherType.eventTitle)),
         Text('${event.day} ${event.date}', style: GatherType.detail),
-      ],
-    ),
-  );
-}
-
-final class SavedToast extends StatelessWidget {
-  const SavedToast({super.key});
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    decoration: BoxDecoration(
-      color: GatherColors.dial,
-      borderRadius: BorderRadius.circular(24),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Icon(
-          CupertinoIcons.heart_fill,
-          size: 16,
-          color: GatherColors.accent,
-        ),
-        const SizedBox(width: 8),
-        Text(
-          'Saved to your plans',
-          style: GatherType.detail.copyWith(color: GatherColors.dialText),
-        ),
       ],
     ),
   );

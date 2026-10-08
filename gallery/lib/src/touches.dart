@@ -15,6 +15,12 @@ final class ShowTouches extends StatefulWidget {
 final class _ShowTouchesState extends State<ShowTouches> {
   final _touches = <int, _Touch>{};
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!GallerySettingsScope.of(context).showTouches) _touches.clear();
+  }
+
   void _down(PointerEvent event) =>
       setState(() => _touches[event.pointer] = _Touch(event.position));
 
