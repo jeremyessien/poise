@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 abstract final class GatherColors {
   static const background = Color(0xFFF4F4F6);
@@ -51,4 +51,19 @@ abstract final class GatherType {
   );
 
   static const dial = TextStyle(fontSize: 15, fontWeight: FontWeight.w600);
+}
+
+final class GatherTheme extends StatelessWidget {
+  const GatherTheme({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Theme(
+    data: ThemeData(
+      scaffoldBackgroundColor: GatherColors.background,
+      colorScheme: ColorScheme.fromSeed(seedColor: GatherColors.accent),
+    ),
+    child: child,
+  );
 }

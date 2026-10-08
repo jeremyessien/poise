@@ -48,11 +48,7 @@ final class _GatherScreenState extends State<GatherScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Theme(
-    data: ThemeData(
-      scaffoldBackgroundColor: GatherColors.background,
-      colorScheme: ColorScheme.fromSeed(seedColor: GatherColors.accent),
-    ),
+  Widget build(BuildContext context) => GatherTheme(
     child: PoiseScope(
       motion: _personality.motion,
       child: Scaffold(
