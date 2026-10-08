@@ -40,7 +40,7 @@ void main() {
     await tester.tap(find.text(MotionWord.enter.description));
     await tester.pumpAndSettle();
     expect(find.byType(WordPage), findsOneWidget);
-    expect(find.text('Play'), findsOneWidget);
+    expect(find.text('Recipes that use it'), findsOneWidget);
   });
 
   testWidgets('every word opens from its address', (tester) async {

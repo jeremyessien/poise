@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gallery/src/app.dart';
-import 'package:gallery/src/home_page.dart';
+import 'package:gallery/src/words_page.dart';
 import 'package:gallery/src/recipe_page.dart';
 import 'package:gallery/src/recipes.dart';
 import 'package:gallery/src/settings.dart';
@@ -50,7 +50,7 @@ void main() {
     await openMenu(tester);
     await tester.tap(find.text('Every word poise uses'));
     await tester.pumpAndSettle();
-    expect(find.byType(HomePage), findsOneWidget);
+    expect(find.byType(WordsPage), findsOneWidget);
     semantics.dispose();
   });
 

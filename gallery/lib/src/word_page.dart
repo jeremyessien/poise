@@ -1,14 +1,10 @@
-import 'dart:math' as math;
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:poise/poise.dart';
+import 'package:poise_registry/pressable/pressable.dart';
 
-import 'demos/demos.dart';
-import 'lane.dart';
-import 'lane_curve.dart';
-import 'settings.dart';
+import 'recipe_curves.dart';
+import 'recipes.dart';
 import 'theme.dart';
-import 'word_feel.dart';
 import 'words.dart';
 
 final class WordPage extends StatefulWidget {
@@ -21,128 +17,110 @@ final class WordPage extends StatefulWidget {
 }
 
 final class _WordPageState extends State<WordPage> {
-  final _play = PlaySignal();
-
-  double get _curveWindow =>
-      Personality.values
-          .map((p) => feltMicros(widget.word.feelIn(p.motion)))
-          .fold(0, math.max)
-          .toDouble() *
-      curveWindowStretch;
-
-  @override
-  void dispose() {
-    _play.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    body: SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: IconButton(
-              tooltip: 'All words',
-              onPressed: () => Navigator.of(context).maybePop(),
-              icon: const Icon(Icons.arrow_back, color: GalleryColors.ink),
-            ),
-          ),
-          const SizedBox(height: 8),
-          _WordTitle(word: widget.word),
-          const SizedBox(height: 8),
-          Text(widget.word.description, style: GalleryType.body),
-          const SizedBox(height: 24),
-          const GalleryControls(),
-          const SizedBox(height: 24),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              for (final (index, personality) in Personality.values.indexed)
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: index == 0 ? 0 : 10),
-                    child: Lane(
-                      personality: personality,
-                      child: PoiseScope(
-                        motion: personality.motion,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            LaneCurve(
-                              word: widget.word,
-                              color: personality.color,
-                              windowMicros: _curveWindow,
-                            ),
-                            demoFor(widget.word, _play),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 28),
-          FilledButton(onPressed: _play.play, child: const Text('Play')),
-        ],
-      ),
-    ),
-  );
-}
-
-final class _WordTitle extends StatefulWidget {
-  const _WordTitle({required this.word});
-
-  final MotionWord word;
-
-  @override
-  State<_WordTitle> createState() => _WordTitleState();
-}
-
-final class _WordTitleState extends State<_WordTitle>
-    with SingleTickerProviderStateMixin {
-  static const _rise = 24.0;
-
-  late final AnimationController _arrival = AnimationController(vsync: this);
-  late Feel _feel;
-  var _started = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final motion = context.motion;
-    _feel = motion.reducesMotion ? motion.enter : PoiseMotion.calm.enter;
-    if (!_started) {
-      _started = true;
-      _arrival
-        ..duration = _feel.duration
-        ..forward();
-    }
-  }
-
-  @override
-  void dispose() {
-    _arrival.dispose();
-    super.dispose();
-  }
+  var _highlighted = Personality.calm;
 
   @override
   Widget build(BuildContext context) {
-    final settled = _arrival.drive(CurveTween(curve: _feel.curve));
-    final travels = _feel is Move;
-    return FadeTransition(
-      opacity: _arrival,
-      child: AnimatedBuilder(
-        animation: settled,
-        builder: (context, title) => Transform.translate(
-          offset: Offset(0, travels ? _rise * (1 - settled.value) : 0),
-          child: title,
+    final recipes = GalleryRecipe.values
+        .where((recipe) => recipe.words.contains(widget.word))
+        .toList();
+
+    return Scaffold(
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                tooltip: 'Back',
+                onPressed: () => Navigator.of(context).maybePop(),
+                icon: const Icon(
+                  CupertinoIcons.chevron_back,
+                  color: GalleryColors.ink,
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(widget.word.name, style: GalleryType.word),
+            const SizedBox(height: 8),
+            Text(widget.word.description, style: GalleryType.body),
+            const SizedBox(height: 28),
+            RecipeCurves(word: widget.word, selected: _highlighted),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 6,
+              children: [
+                for (final personality in Personality.values)
+                  ChoiceChip(
+                    label: Text(personality.label),
+                    selected: personality == _highlighted,
+                    onSelected: (_) =>
+                        setState(() => _highlighted = personality),
+                  ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
+              child: Text(
+                'Recipes that use it',
+                style: GalleryType.listWord.copyWith(fontSize: 28),
+              ),
+            ),
+            if (recipes.isEmpty)
+              const Text(
+                'None yet. Its recipe is on the way.',
+                style: GalleryType.body,
+              )
+            else
+              for (final recipe in recipes) _RecipeLink(recipe: recipe),
+          ],
         ),
-        child: Text(widget.word.name, style: GalleryType.word),
       ),
     );
   }
+}
+
+final class _RecipeLink extends StatelessWidget {
+  const _RecipeLink({required this.recipe});
+
+  final GalleryRecipe recipe;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: Pressable(
+      onTap: () => Navigator.of(context).pushNamed(recipe.path),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 14, 10, 14),
+        decoration: BoxDecoration(
+          color: GalleryColors.lane,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: GalleryColors.grid),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    recipe.title,
+                    style: GalleryType.label.copyWith(fontSize: 16),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(recipe.summary, style: GalleryType.group),
+                ],
+              ),
+            ),
+            const Icon(
+              CupertinoIcons.chevron_forward,
+              size: 18,
+              color: GalleryColors.quietInk,
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }
