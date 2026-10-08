@@ -6,6 +6,7 @@ import 'menu_page.dart';
 import 'recipe_page.dart';
 import 'recipes.dart';
 import 'settings.dart';
+import 'touches.dart';
 import 'theme.dart';
 import 'word_page.dart';
 import 'words.dart';
@@ -22,7 +23,7 @@ final class GalleryApp extends StatelessWidget {
     theme: galleryTheme(),
     builder: (context, child) => GallerySettingsScope(
       settings: settings,
-      child: child ?? const SizedBox.shrink(),
+      child: ShowTouches(child: child ?? const SizedBox.shrink()),
     ),
     onGenerateRoute: (route) => MaterialPageRoute<void>(
       settings: route,
