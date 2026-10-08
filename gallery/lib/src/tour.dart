@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/scheduler.dart';
@@ -13,8 +14,9 @@ import 'words.dart';
 typedef TourCaption = ({String title, String line});
 
 /// Walks through the whole gallery by itself, ready to record: presses, saves
-/// and turns the dial in Gather, then opens the menu and visits a recipe, the
-/// words and the switches before coming home. Any real touch stops it.
+/// and turns the dial in Gather, then opens the menu and visits a recipe,
+/// every one of the ten words and the switches before coming home. Any real
+/// touch stops it.
 ///
 /// It finds what to press in the widget tree and touches it with its own
 /// pointer events, so screens need no hooks for it.
@@ -110,9 +112,14 @@ final class GalleryTour extends ChangeNotifier {
     await _turnDial(Personality.crisp);
     await _pause(const Duration(milliseconds: 1600));
 
+    _say('transition', 'The dial slides on it, the way a screen would');
+    await _pause(const Duration(milliseconds: 700));
+    await _turnDial(Personality.playful);
+    await _pause(const Duration(milliseconds: 1600));
+
     _say('Same code, three personalities', 'Watch the whole screen change');
     await _pause(const Duration(milliseconds: 1400));
-    for (final personality in const [Personality.playful, Personality.calm]) {
+    for (final personality in Personality.values) {
       await _turnDial(personality);
       _say(personality.label, personality.tagline);
       await _pause(const Duration(milliseconds: 1900));
@@ -144,8 +151,11 @@ final class GalleryTour extends ChangeNotifier {
     await _pause(_beat);
     _say('The ten words', 'Apps, recipes and agents all use the same words');
     await _pause(const Duration(milliseconds: 1600));
-    await _scrollToEnd();
-    await _pause(const Duration(milliseconds: 1200));
+    for (final word in MotionWord.values) {
+      await _bringIntoView(word.name);
+      _sayWord(word);
+      await _pause(const Duration(milliseconds: 1300));
+    }
     await _tap(_findText(MotionWord.stagger.name));
     await _pause(_beat);
     _say('A word', 'Its curves, and the recipes that use it');
@@ -171,6 +181,7 @@ final class GalleryTour extends ChangeNotifier {
 
     navigator.currentState?.popUntil((route) => route.isFirst);
     await _pause(_beat);
+    await _turnDial(Personality.calm);
     _say('poise', 'Motion your agent already knows');
     await _pause(const Duration(milliseconds: 2200));
   }
@@ -220,16 +231,47 @@ final class GalleryTour extends ChangeNotifier {
     await _pause(const Duration(milliseconds: 700));
   }
 
-  Future<void> _scrollToEnd() async {
-    final scrollable = _element((widget) => widget is Scrollable, 0);
-    final position =
-        ((scrollable as StatefulElement).state as ScrollableState).position;
-    await position.animateTo(
-      position.maxScrollExtent,
+  Future<void> _scrollToEnd() => _scrollTo(_scrollPosition().maxScrollExtent);
+
+  Future<void> _scrollTo(double offset) async {
+    await _scrollPosition().animateTo(
+      offset,
       duration: const Duration(milliseconds: 900),
       curve: Curves.easeInOutCubic,
     );
     _checkStopped();
+  }
+
+  /// Scrolls until the row whose title is [text] is built and in view. Rows
+  /// below the fold don't exist yet, so this pages down until one does.
+  Future<void> _bringIntoView(String text) async {
+    for (var page = 0; page < 8; page++) {
+      final rows = _elements((widget) => widget is Text && widget.data == text);
+      if (rows.isNotEmpty) {
+        await Scrollable.ensureVisible(
+          rows.first,
+          alignment: 0.4,
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeInOutCubic,
+        );
+        _checkStopped();
+        return;
+      }
+      final position = _scrollPosition();
+      await _scrollTo(
+        math.min(
+          position.pixels + position.viewportDimension * 0.7,
+          position.maxScrollExtent,
+        ),
+      );
+    }
+    throw const _TourStopped();
+  }
+
+  /// The page's own list, which is the first scrollable on it.
+  ScrollPosition _scrollPosition() {
+    final scrollable = _element((widget) => widget is Scrollable, 0);
+    return ((scrollable as StatefulElement).state as ScrollableState).position;
   }
 
   RenderBox _find<T extends Widget>() => _box((widget) => widget is T, 0);
@@ -248,9 +290,16 @@ final class GalleryTour extends ChangeNotifier {
     return box;
   }
 
-  /// The [index]th widget on the current page that [matches]. Only onstage
-  /// children are visited, so pages underneath in the navigator are skipped.
   Element _element(bool Function(Widget) matches, int index) {
+    final found = _elements(matches);
+    if (found.length <= index) throw const _TourStopped();
+    return found[index];
+  }
+
+  /// Every widget on the current page that [matches], in tree order. Only
+  /// onstage children are visited, so pages underneath in the navigator are
+  /// skipped.
+  List<Element> _elements(bool Function(Widget) matches) {
     final found = <Element>[];
     void visit(Element element) {
       if (matches(element.widget)) found.add(element);
@@ -258,8 +307,7 @@ final class GalleryTour extends ChangeNotifier {
     }
 
     if (navigator.currentContext case final Element root) visit(root);
-    if (found.length <= index) throw const _TourStopped();
-    return found[index];
+    return found;
   }
 }
 

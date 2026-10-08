@@ -8,6 +8,7 @@ import 'package:gallery/src/gather/gather_screen.dart';
 import 'package:gallery/src/menu_page.dart';
 import 'package:gallery/src/recipe_page.dart';
 import 'package:gallery/src/settings.dart';
+import 'package:gallery/src/theme.dart';
 import 'package:gallery/src/tour.dart';
 import 'package:gallery/src/tour_overlay.dart';
 import 'package:gallery/src/word_page.dart';
@@ -50,7 +51,7 @@ void main() {
     var sawSlowMotion = false;
 
     unawaited(tour.play());
-    for (var frame = 0; frame < 6000 && tour.isRunning; frame++) {
+    for (var frame = 0; frame < 9000 && tour.isRunning; frame++) {
       await tester.pump(const Duration(milliseconds: 16));
       for (final page in [MenuPage, RecipePage, WordsPage, WordPage]) {
         if (find.byType(page).evaluate().isNotEmpty) pages.add(page);
@@ -69,7 +70,14 @@ void main() {
     expect(motions, containsAll([PoiseMotion.crisp, PoiseMotion.playful]));
     expect(
       captions,
-      containsAll(['feedback', 'enter', 'exit', 'stagger', 'The menu']),
+      containsAll([
+        for (final word in MotionWord.values) word.name,
+        for (final personality in Personality.values) personality.label,
+        'The menu',
+        'How it moves',
+        'Reduce motion',
+        'Slow motion',
+      ]),
     );
     expect(sawReduceMotion, isTrue);
     expect(sawSlowMotion, isTrue);

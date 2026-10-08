@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:poise_registry/reveal/reveal.dart';
 
 import 'theme.dart';
@@ -24,8 +24,8 @@ final class GalleryTourScope extends InheritedNotifier<GalleryTour> {
   }
 }
 
-/// Shows the tour's captions above every page, and stops the tour the moment
-/// a real finger touches the screen.
+/// Shows the tour's captions along the top of every page, and stops the tour
+/// the moment a real finger touches the screen.
 final class TourOverlay extends StatelessWidget {
   const TourOverlay({super.key, required this.child});
 
@@ -42,16 +42,19 @@ final class TourOverlay extends StatelessWidget {
         children: [
           child,
           Positioned(
-            left: 20,
-            right: 20,
-            bottom: 164,
+            top: 0,
+            left: 0,
+            right: 0,
             child: IgnorePointer(
-              child: Center(
+              child: SafeArea(
+                bottom: false,
+                minimum: const EdgeInsets.fromLTRB(20, 8, 20, 0),
                 child: ListenableBuilder(
                   listenable: tour,
                   builder: (context, _) => Reveal(
                     visible: tour.showsCaption,
                     revealOnFirstBuild: false,
+                    from: RevealFrom.top,
                     child: TourCaption(
                       title: tour.caption.title,
                       line: tour.caption.line,
@@ -74,23 +77,25 @@ final class TourCaption extends StatelessWidget {
   final String line;
 
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.fromLTRB(18, 10, 18, 12),
-    decoration: BoxDecoration(
-      color: GalleryColors.paper,
+  Widget build(BuildContext context) => Material(
+    color: GalleryColors.paper,
+    shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(18),
-      border: Border.all(color: GalleryColors.grid),
+      side: const BorderSide(color: GalleryColors.grid),
     ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          title,
-          textAlign: TextAlign.center,
-          style: GalleryType.listWord.copyWith(fontSize: 30),
-        ),
-        Text(line, textAlign: TextAlign.center, style: GalleryType.group),
-      ],
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(18, 10, 18, 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: GalleryType.listWord.copyWith(fontSize: 30),
+          ),
+          Text(line, textAlign: TextAlign.center, style: GalleryType.group),
+        ],
+      ),
     ),
   );
 }
