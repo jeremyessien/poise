@@ -1,0 +1,8 @@
+name: reveal
+title: Reveal
+summary: Brings a widget in and takes it away on springs that turn around smoothly if you change your mind halfway.
+words: [enter, exit]
+files:
+  - reveal.dart
+needs: []
+since: 0.1.0
