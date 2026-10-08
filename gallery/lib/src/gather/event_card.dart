@@ -11,12 +11,14 @@ final class EventCard extends StatelessWidget {
     required this.saved,
     required this.onOpen,
     required this.onToggleSaved,
+    this.heartKey,
   });
 
   final GatherEvent event;
   final bool saved;
   final VoidCallback onOpen;
   final VoidCallback onToggleSaved;
+  final Key? heartKey;
 
   @override
   Widget build(BuildContext context) => Pressable(
@@ -64,6 +66,7 @@ final class EventCard extends StatelessWidget {
             button: true,
             label: saved ? 'Remove from plans' : 'Save to plans',
             child: GestureDetector(
+              key: heartKey,
               behavior: HitTestBehavior.opaque,
               onTap: onToggleSaved,
               child: Padding(

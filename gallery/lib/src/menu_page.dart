@@ -73,6 +73,21 @@ final class MenuPage extends StatelessWidget {
                   value: settings.reduceMotion,
                   onChanged: (value) => settings.reduceMotion = value,
                 ),
+                _Toggle(
+                  title: 'Show touches',
+                  detail: 'A circle wherever a finger lands',
+                  value: settings.showTouches,
+                  onChanged: (value) => settings.showTouches = value,
+                ),
+                _Row(
+                  title: 'Play the tour',
+                  detail: 'Gather runs itself, ready to record',
+                  onTap: () {
+                    settings.showTouches = true;
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    settings.requestTour();
+                  },
+                ),
               ],
             ),
           ],
