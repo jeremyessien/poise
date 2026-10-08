@@ -57,11 +57,14 @@ final class _RevealState extends State<Reveal>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final previous = _settledIn ? _motion : null;
     _motion = context.motion;
     if (!_settledIn) {
       _settledIn = true;
       _feel = _motion.enter;
       if (widget.visible && widget.revealOnFirstBuild) _animate(visible: true);
+    } else if (!identical(previous, _motion) && _shown.isAnimating) {
+      _animate(visible: widget.visible);
     }
   }
 

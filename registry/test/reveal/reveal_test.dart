@@ -116,6 +116,22 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets('stops travelling if motion is reduced mid-flight', (
+    tester,
+  ) async {
+    await pumpReveal(tester, visible: false);
+    await pumpReveal(tester, visible: true);
+    await tester.pump(const Duration(milliseconds: 40));
+    expect(travel(tester), isNot(Offset.zero));
+
+    await pumpReveal(tester, visible: true, disableAnimations: true);
+    await tester.pump();
+    expect(travel(tester), Offset.zero);
+
+    await tester.pumpAndSettle();
+    expect(opacity(tester), 1);
+  });
+
   testWidgets('start mirrors in right-to-left languages', (tester) async {
     await pumpReveal(tester, visible: true, from: RevealFrom.start);
     final leftToRight = travel(tester).dx;
