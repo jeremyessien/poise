@@ -33,6 +33,10 @@ jobs:
       - name: Analyzer
         run: flutter analyze
 
-      - name: Tests
+      - name: Tests (poise)
         working-directory: packages/poise
+        run: flutter test
+
+      - name: Tests (gallery)
+        working-directory: gallery
         run: flutter test

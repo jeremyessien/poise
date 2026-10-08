@@ -1,0 +1,32 @@
+name: gallery
+description: See every poise motion word running in every personality, side by side.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.11.0
+  flutter: ">=3.41.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  poise: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: Instrument Sans
+      fonts:
+        - asset: assets/fonts/InstrumentSans.ttf
+    - family: Instrument Serif
+      fonts:
+        - asset: assets/fonts/InstrumentSerif-Italic.ttf
+          style: italic
