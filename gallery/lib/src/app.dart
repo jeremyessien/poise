@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'home_page.dart';
+import 'gather/gather_screen.dart';
+import 'menu_page.dart';
+import 'recipe_page.dart';
+import 'recipes.dart';
 import 'settings.dart';
+import 'touches.dart';
 import 'theme.dart';
 import 'word_page.dart';
+import 'words_page.dart';
 import 'words.dart';
 
 final class GalleryApp extends StatelessWidget {
@@ -18,13 +23,23 @@ final class GalleryApp extends StatelessWidget {
     theme: galleryTheme(),
     builder: (context, child) => GallerySettingsScope(
       settings: settings,
-      child: child ?? const SizedBox.shrink(),
+      child: ShowTouches(child: child ?? const SizedBox.shrink()),
     ),
     onGenerateRoute: (route) => MaterialPageRoute<void>(
       settings: route,
-      builder: (context) => switch (MotionWord.fromPath(route.name ?? '/')) {
-        final word? => WordPage(word: word),
-        null => const HomePage(),
+      builder: (context) {
+        final path = route.name ?? '/';
+        return switch ((
+          path,
+          MotionWord.fromPath(path),
+          GalleryRecipe.fromPath(path),
+        )) {
+          ('/poise', _, _) => const MenuPage(),
+          ('/words', _, _) => const WordsPage(),
+          (_, final word?, _) => WordPage(word: word),
+          (_, _, final recipe?) => RecipePage(recipe: recipe),
+          _ => const GatherScreen(),
+        };
       },
     ),
   );

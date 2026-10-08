@@ -1,0 +1,58 @@
+import 'words.dart';
+
+enum GalleryRecipe {
+  pressable(
+    'Pressable',
+    'Any widget answers a press, and dims instead of shrinking when motion '
+        'is reduced.',
+    [MotionWord.feedback],
+    '''
+Pressable(
+  onTap: openEvent,
+  child: const EventCard(),
+)''',
+  ),
+  reveal(
+    'Reveal',
+    'Comes in and goes away on springs that turn around smoothly if you '
+        'change your mind halfway.',
+    [MotionWord.enter, MotionWord.exit],
+    '''
+Reveal(
+  visible: justSaved,
+  child: const SavedToast(),
+)''',
+  ),
+  staggeredColumn(
+    'StaggeredColumn',
+    'Children arrive one after another, spaced by the personality\'s gap.',
+    [MotionWord.stagger, MotionWord.enter],
+    '''
+StaggeredColumn(
+  children: [
+    for (final event in events) EventRow(event: event),
+  ],
+)''',
+  );
+
+  const GalleryRecipe(this.title, this.summary, this.words, this.code);
+
+  final String title;
+  final String summary;
+  final List<MotionWord> words;
+  final String code;
+
+  String get path => '/recipes/$name';
+
+  String get folder => name.replaceAllMapped(
+    RegExp('[A-Z]'),
+    (letter) => '_${letter[0]?.toLowerCase()}',
+  );
+
+  static GalleryRecipe? fromPath(String path) {
+    for (final recipe in values) {
+      if (recipe.path == path) return recipe;
+    }
+    return null;
+  }
+}
