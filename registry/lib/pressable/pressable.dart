@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:poise/poise.dart';
 
+/// Makes any widget respond to a press using the `feedback` motion word.
+///
+/// While held, the child shrinks slightly and springs back on release, in
+/// whatever personality the nearest `PoiseScope` sets. When the phone asks for
+/// less motion it dims instead of shrinking. [onTap] fires on release.
 final class Pressable extends StatefulWidget {
   const Pressable({
     super.key,
@@ -10,6 +15,8 @@ final class Pressable extends StatefulWidget {
   });
 
   final VoidCallback onTap;
+
+  /// What a screen reader announces for this button.
   final String semanticLabel;
   final Widget child;
 

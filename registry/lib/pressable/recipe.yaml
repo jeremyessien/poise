@@ -1,0 +1,8 @@
+name: pressable
+title: Pressable
+summary: Makes any widget respond to a press, and dims instead of shrinking when the phone asks for less motion.
+words: [feedback]
+files:
+  - pressable.dart
+needs: []
+since: 0.1.0
