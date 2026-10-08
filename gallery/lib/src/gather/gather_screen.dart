@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:poise/poise.dart';
 import 'package:poise_registry/reveal/reveal.dart';
+import 'package:poise_registry/staggered_column/staggered_column.dart';
 
 import '../theme.dart';
 import 'event_card.dart';
@@ -72,25 +73,20 @@ final class _GatherScreenState extends State<GatherScreen> {
                   const SizedBox(height: 2),
                   const Text('This week near you', style: GatherType.subtitle),
                   const SizedBox(height: 20),
-                  KeyedSubtree(
-                    key: ValueKey(_personality),
-                    child: Column(
-                      children: [
-                        for (final (index, event) in sampleEvents.indexed)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: Reveal(
-                              visible: true,
-                              child: EventCard(
-                                event: event,
-                                saved: _saved.contains(index),
-                                onOpen: () {},
-                                onToggleSaved: () => _toggleSaved(index),
-                              ),
-                            ),
+                  StaggeredColumn(
+                    replayKey: _personality,
+                    children: [
+                      for (final (index, event) in sampleEvents.indexed)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: EventCard(
+                            event: event,
+                            saved: _saved.contains(index),
+                            onOpen: () {},
+                            onToggleSaved: () => _toggleSaved(index),
                           ),
-                      ],
-                    ),
+                        ),
+                    ],
                   ),
                 ],
               ),

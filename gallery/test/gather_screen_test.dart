@@ -5,6 +5,7 @@ import 'package:gallery/src/gather/events.dart';
 import 'package:gallery/src/gather/gather_screen.dart';
 import 'package:poise/poise.dart';
 import 'package:poise_registry/reveal/reveal.dart';
+import 'package:poise_registry/staggered_column/staggered_column.dart';
 
 void main() {
   Future<void> pumpGather(WidgetTester tester) async {
@@ -32,6 +33,27 @@ void main() {
     await tester.tap(find.text('playful'));
     await tester.pumpAndSettle();
     expect(motionOf(tester), same(PoiseMotion.playful));
+  });
+
+  testWidgets('turning the dial replays the cards arriving', (tester) async {
+    await pumpGather(tester);
+    int arrived() => tester
+        .widgetList<Reveal>(
+          find.descendant(
+            of: find.byType(StaggeredColumn),
+            matching: find.byType(Reveal),
+          ),
+        )
+        .where((reveal) => reveal.visible)
+        .length;
+    expect(arrived(), sampleEvents.length);
+
+    await tester.tap(find.text('playful'));
+    await tester.pump();
+    expect(arrived(), 1);
+
+    await tester.pumpAndSettle();
+    expect(arrived(), sampleEvents.length);
   });
 
   testWidgets('saving an event shows a toast that goes away', (tester) async {
