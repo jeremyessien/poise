@@ -37,6 +37,10 @@ jobs:
         working-directory: packages/poise
         run: flutter test
 
+      - name: Tests (registry)
+        working-directory: registry
+        run: flutter test
+
       - name: Tests (gallery)
         working-directory: gallery
         run: flutter test

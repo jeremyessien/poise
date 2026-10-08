@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'curve_glyph.dart';
-import 'pressable.dart';
+import 'package:poise_registry/pressable/pressable.dart';
 import 'theme.dart';
 import 'words.dart';
 

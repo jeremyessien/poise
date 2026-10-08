@@ -15,6 +15,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   poise: any
+  poise_registry: any
 
 dev_dependencies:
   flutter_test:
