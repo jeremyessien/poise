@@ -6,4 +6,5 @@ environment:
 
 workspace:
   - packages/poise
+  - registry
   - gallery
