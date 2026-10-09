@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gallery/src/code_block.dart';
 import 'package:gallery/src/gather/gather_style.dart';
+import 'package:gallery/src/gather/event_details.dart';
 import 'package:gallery/src/gather/personality_dial.dart';
 import 'package:gallery/src/recipe_curves.dart';
 import 'package:gallery/src/recipe_page.dart';
@@ -127,4 +128,21 @@ void main() {
     expect(find.text('Copied'), findsOneWidget);
     await tester.pump(const Duration(seconds: 2));
   });
+
+  for (final textScale in [1.0, 1.3, 2.0]) {
+    testWidgets('the sheet stage opens without overflowing at ${textScale}x', (
+      tester,
+    ) async {
+      tester.platformDispatcher.textScaleFactorTestValue = textScale;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await pumpPage(tester, GalleryRecipe.poiseSheet);
+      await tester.ensureVisible(find.text('Open details'));
+      await tester.pump(const Duration(seconds: 1));
+      await tester.tap(find.text('Open details'));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 2));
+      expect(tester.takeException(), isNull);
+      expect(find.text(EventDetails.heading), findsOneWidget);
+    });
+  }
 }

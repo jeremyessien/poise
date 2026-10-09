@@ -15,7 +15,8 @@ final class GatherButton extends StatelessWidget {
   Widget build(BuildContext context) => Pressable(
     onTap: onTap,
     child: Container(
-      height: 50,
+      constraints: const BoxConstraints(minHeight: 50),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: GatherColors.accent,

@@ -112,12 +112,16 @@ final class _DateTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
     ),
     alignment: Alignment.center,
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(event.day, style: GatherType.tileDay),
-        Text(event.date, style: GatherType.tileDate),
-      ],
+    padding: const EdgeInsets.all(4),
+    child: FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(event.day, style: GatherType.tileDay),
+          Text(event.date, style: GatherType.tileDate),
+        ],
+      ),
     ),
   );
 }

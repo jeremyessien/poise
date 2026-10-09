@@ -355,25 +355,27 @@ final class _SheetStageState extends State<_SheetStage> {
       borderRadius: BorderRadius.circular(16),
       child: Stack(
         children: [
-          Column(
-            children: [
-              EventCard(
-                event: sampleEvents[1],
-                saved: false,
-                onOpen: () => setState(() => _open = true),
-                onToggleSaved: () {},
-              ),
-              const SizedBox(height: 20),
-              GatherButton(
-                label: const Text('Open details'),
-                onTap: () => setState(() => _open = true),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Drag it, nudge it, or throw it away',
-                style: GatherType.detail,
-              ),
-            ],
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                EventCard(
+                  event: sampleEvents[1],
+                  saved: false,
+                  onOpen: () => setState(() => _open = true),
+                  onToggleSaved: () {},
+                ),
+                const SizedBox(height: 20),
+                GatherButton(
+                  label: const Text('Open details'),
+                  onTap: () => setState(() => _open = true),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Drag it, nudge it, or throw it away',
+                  style: GatherType.detail,
+                ),
+              ],
+            ),
           ),
           Positioned.fill(
             child: PoiseSheet(
