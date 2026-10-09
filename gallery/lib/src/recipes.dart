@@ -51,6 +51,17 @@ TextSwap(
   },
 )''',
   ),
+  countUp(
+    'CountUp',
+    'A number that counts to its new value, so a balance or a score visibly '
+        'climbs instead of jumping.',
+    [MotionWord.change],
+    '''
+CountUp(
+  value: spotsLeft,
+  format: (n) => '\$n spots left',
+)''',
+  ),
   staggeredColumn(
     'StaggeredColumn',
     'A column whose children arrive one after another, spaced by the '

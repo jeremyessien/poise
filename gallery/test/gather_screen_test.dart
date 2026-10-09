@@ -177,5 +177,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(JoinState.joined.label), findsOneWidget);
     expect(find.text(JoinState.joining.label), findsNothing);
+    final spots = sampleEvents.first.spotsLeft;
+    expect(find.text(spotsLeftLabel(spots - 1)), findsNWidgets(2));
+    expect(find.text(spotsLeftLabel(spots)), findsNothing);
   });
 }

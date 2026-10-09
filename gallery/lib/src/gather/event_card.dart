@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:poise_registry/count_up/count_up.dart';
 import 'package:poise_registry/pressable/pressable.dart';
 
 import 'events.dart';
@@ -11,12 +12,17 @@ final class EventCard extends StatelessWidget {
     required this.saved,
     required this.onOpen,
     required this.onToggleSaved,
+    this.spotsLeft,
   });
 
   final GatherEvent event;
   final bool saved;
   final VoidCallback onOpen;
   final VoidCallback onToggleSaved;
+
+  /// Spots still open, when it differs from the event's own count because
+  /// someone joined.
+  final int? spotsLeft;
 
   @override
   Widget build(BuildContext context) => Pressable(
@@ -56,7 +62,11 @@ final class EventCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 2),
-                Text('${event.spotsLeft} spots left', style: GatherType.detail),
+                CountUp(
+                  value: spotsLeft ?? event.spotsLeft,
+                  format: spotsLeftLabel,
+                  style: GatherType.detail,
+                ),
               ],
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
+import 'package:poise_registry/count_up/count_up.dart';
 import 'package:poise_registry/text_swap/text_swap.dart';
 
 import 'events.dart';
@@ -24,6 +25,7 @@ final class EventDetails extends StatelessWidget {
     required this.event,
     required this.joinState,
     required this.onJoin,
+    this.spotsLeft,
   });
 
   /// Heads the details, and gives the tour something to drag the sheet by.
@@ -32,6 +34,10 @@ final class EventDetails extends StatelessWidget {
   final GatherEvent event;
   final JoinState joinState;
   final VoidCallback onJoin;
+
+  /// Spots still open, when it differs from the event's own count because
+  /// someone joined.
+  final int? spotsLeft;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -46,12 +52,15 @@ final class EventDetails extends StatelessWidget {
         const SizedBox(height: 12),
         _Fact(
           icon: CupertinoIcons.calendar,
-          text: '${event.day} ${event.date} · ${event.time}',
+          child: Text('${event.day} ${event.date} · ${event.time}'),
         ),
-        _Fact(icon: CupertinoIcons.location_solid, text: event.place),
+        _Fact(icon: CupertinoIcons.location_solid, child: Text(event.place)),
         _Fact(
           icon: CupertinoIcons.person_2_fill,
-          text: '${event.spotsLeft} spots left',
+          child: CountUp(
+            value: spotsLeft ?? event.spotsLeft,
+            format: spotsLeftLabel,
+          ),
         ),
         const SizedBox(height: 20),
         GatherButton(label: TextSwap(joinState.label), onTap: onJoin),
@@ -61,10 +70,10 @@ final class EventDetails extends StatelessWidget {
 }
 
 final class _Fact extends StatelessWidget {
-  const _Fact({required this.icon, required this.text});
+  const _Fact({required this.icon, required this.child});
 
   final IconData icon;
-  final String text;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -73,7 +82,12 @@ final class _Fact extends StatelessWidget {
       children: [
         Icon(icon, size: 18, color: GatherColors.secondaryText),
         const SizedBox(width: 10),
-        Expanded(child: Text(text, style: GatherType.subtitle)),
+        Expanded(
+          child: DefaultTextStyle.merge(
+            style: GatherType.subtitle,
+            child: child,
+          ),
+        ),
       ],
     ),
   );

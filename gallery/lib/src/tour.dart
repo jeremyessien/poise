@@ -121,7 +121,9 @@ final class GalleryTour extends ChangeNotifier {
     _sayWord(MotionWord.change);
     await _pause(_beat);
     await _tap(_findText(JoinState.open.label));
-    await _pause(const Duration(milliseconds: 2000));
+    await _pause(const Duration(milliseconds: 1400));
+    _say('change', 'Spots left count down as you join');
+    await _pause(const Duration(milliseconds: 1800));
     await _drag(
       _findText(EventDetails.heading),
       by: const Offset(0, 320),

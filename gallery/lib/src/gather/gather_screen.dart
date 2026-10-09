@@ -45,6 +45,10 @@ final class _GatherScreenState extends State<GatherScreen> {
     super.dispose();
   }
 
+  int _spotsLeft(int index) =>
+      sampleEvents[index].spotsLeft -
+      (_joins[index] == JoinState.joined ? 1 : 0);
+
   void _join(int index) {
     if (_joins[index] case JoinState.joining || JoinState.joined) return;
     setState(() => _joins[index] = JoinState.joining);
@@ -98,6 +102,7 @@ final class _GatherScreenState extends State<GatherScreen> {
                           padding: const EdgeInsets.only(bottom: 12),
                           child: EventCard(
                             event: event,
+                            spotsLeft: _spotsLeft(index),
                             saved: _saved.contains(index),
                             onOpen: () => setState(() {
                               _opened = index;
@@ -148,6 +153,7 @@ final class _GatherScreenState extends State<GatherScreen> {
                   final index? => EventDetails(
                     event: sampleEvents[index],
                     joinState: _joins[index] ?? JoinState.open,
+                    spotsLeft: _spotsLeft(index),
                     onJoin: () => _join(index),
                   ),
                   null => const SizedBox.shrink(),

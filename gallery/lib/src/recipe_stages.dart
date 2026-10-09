@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:poise_registry/count_up/count_up.dart';
 import 'package:poise_registry/poise_sheet/poise_sheet.dart';
 import 'package:poise_registry/reveal/reveal.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
@@ -33,6 +34,7 @@ final class RecipeStage extends StatelessWidget {
         GalleryRecipe.reveal => const _RevealStage(),
         GalleryRecipe.poiseSheet => const _SheetStage(),
         GalleryRecipe.textSwap => const _TextSwapStage(),
+        GalleryRecipe.countUp => const _CountUpStage(),
         GalleryRecipe.staggeredColumn => _StaggerStage(replayKey: replayKey),
       },
     ),
@@ -124,6 +126,37 @@ final class _TextSwapStageState extends State<_TextSwapStage> {
         style: GatherType.detail,
       ),
       const SizedBox(height: 96),
+    ],
+  );
+}
+
+final class _CountUpStage extends StatefulWidget {
+  const _CountUpStage();
+
+  @override
+  State<_CountUpStage> createState() => _CountUpStageState();
+}
+
+final class _CountUpStageState extends State<_CountUpStage> {
+  static const _full = 40;
+  static const _group = 7;
+
+  var _spots = _full;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      const SizedBox(height: 56),
+      CountUp(value: _spots, style: GatherType.title.copyWith(fontSize: 64)),
+      const Text('spots left', style: GatherType.subtitle),
+      const SizedBox(height: 40),
+      GatherButton(
+        label: Text(_spots < _group ? 'Open more spots' : 'A group joins'),
+        onTap: () =>
+            setState(() => _spots = _spots < _group ? _full : _spots - _group),
+      ),
+      const SizedBox(height: 16),
     ],
   );
 }

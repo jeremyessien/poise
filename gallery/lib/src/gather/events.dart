@@ -58,3 +58,6 @@ const sampleEvents = [
     tile: Color(0xFFE3F5E1),
   ),
 ];
+
+/// How Gather words the number of spots an event has left.
+String spotsLeftLabel(num spots) => '$spots spots left';
