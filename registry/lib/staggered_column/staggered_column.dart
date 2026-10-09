@@ -37,13 +37,18 @@ final class StaggeredColumn extends StatefulWidget {
 
 final class _StaggeredColumnState extends State<StaggeredColumn>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _clock = AnimationController.unbounded(
-    vsync: this,
-  )..addListener(_letNextArrive);
+  late final AnimationController _clock;
   var _gap = Duration.zero;
   var _arrived = 0;
   var _round = 0;
   var _started = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _clock = AnimationController.unbounded(vsync: this)
+      ..addListener(_letNextArrive);
+  }
 
   @override
   void didChangeDependencies() {

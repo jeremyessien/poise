@@ -49,14 +49,18 @@ final class _PoiseSheetState extends State<PoiseSheet>
   static const _overpullResistance = 0.25;
   static const _overhang = 48.0;
 
-  late final AnimationController _shown = AnimationController.unbounded(
-    vsync: this,
-  );
+  late final AnimationController _shown;
   final _sheet = GlobalKey();
   late PoiseMotion _motion;
   late Feel _feel;
   var _settledIn = false;
   double? _releaseSpeed;
+
+  @override
+  void initState() {
+    super.initState();
+    _shown = AnimationController.unbounded(vsync: this);
+  }
 
   @override
   void didChangeDependencies() {

@@ -46,13 +46,19 @@ final class Reveal extends StatefulWidget {
 
 final class _RevealState extends State<Reveal>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _shown = AnimationController.unbounded(
-    vsync: this,
-    value: widget.visible && !widget.revealOnFirstBuild ? 1 : 0,
-  );
+  late final AnimationController _shown;
   late PoiseMotion _motion;
   late Feel _feel;
   var _settledIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _shown = AnimationController.unbounded(
+      vsync: this,
+      value: widget.visible && !widget.revealOnFirstBuild ? 1 : 0,
+    );
+  }
 
   @override
   void didChangeDependencies() {
