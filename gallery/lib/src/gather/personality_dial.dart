@@ -25,10 +25,16 @@ final class _PersonalityDialState extends State<PersonalityDial>
   static const _height = 44.0;
   static const _inset = 4.0;
 
-  late final AnimationController _position = AnimationController.unbounded(
-    vsync: this,
-    value: widget.selected.index.toDouble(),
-  );
+  late final AnimationController _position;
+
+  @override
+  void initState() {
+    super.initState();
+    _position = AnimationController.unbounded(
+      vsync: this,
+      value: widget.selected.index.toDouble(),
+    );
+  }
 
   @override
   void didUpdateWidget(PersonalityDial oldWidget) {
