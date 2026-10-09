@@ -138,10 +138,12 @@ final class GalleryTour extends ChangeNotifier {
     );
     await _pause(const Duration(milliseconds: 1000));
 
-    _sayWord(MotionWord.enter);
+    _say('celebrate', 'Saving an event bursts the heart');
     await _pause(_beat);
     await _tap(_findLabel('Save to plans', index: 1));
-    await _pause(const Duration(milliseconds: 1400));
+    await _pause(const Duration(milliseconds: 1000));
+    _sayWord(MotionWord.enter);
+    await _pause(const Duration(milliseconds: 1000));
 
     _sayWord(MotionWord.exit);
     await _pause(const Duration(milliseconds: 1500));

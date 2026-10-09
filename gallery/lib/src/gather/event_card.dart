@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:poise_registry/count_up/count_up.dart';
+import 'package:poise_registry/heart_burst/heart_burst.dart';
 import 'package:poise_registry/pressable/pressable.dart';
 
 import 'events.dart';
@@ -78,12 +79,15 @@ final class EventCard extends StatelessWidget {
               onTap: onToggleSaved,
               child: Padding(
                 padding: const EdgeInsets.all(10),
-                child: Icon(
-                  saved ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
-                  size: 24,
-                  color: saved
-                      ? GatherColors.accent
-                      : GatherColors.secondaryText,
+                child: HeartBurst(
+                  liked: saved,
+                  child: Icon(
+                    saved ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+                    size: 24,
+                    color: saved
+                        ? GatherColors.accent
+                        : GatherColors.secondaryText,
+                  ),
                 ),
               ),
             ),

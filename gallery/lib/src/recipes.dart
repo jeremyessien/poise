@@ -85,6 +85,17 @@ Shake(
   child: PromoCodeField(controller: code),
 )''',
   ),
+  heartBurst(
+    'HeartBurst',
+    'The like, where a heart pops and bursts when it\'s filled and simply '
+        'presses when it\'s taken back.',
+    [MotionWord.celebrate, MotionWord.feedback],
+    '''
+HeartBurst(
+  liked: saved,
+  child: Icon(saved ? CupertinoIcons.heart_fill : CupertinoIcons.heart),
+)''',
+  ),
   staggeredColumn(
     'StaggeredColumn',
     'A column whose children arrive one after another, spaced by the '

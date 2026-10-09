@@ -9,6 +9,7 @@ import 'package:gallery/src/gather/gather_screen.dart';
 import 'package:gallery/src/settings.dart';
 import 'package:gallery/src/touches.dart';
 import 'package:poise/poise.dart';
+import 'package:poise_registry/heart_burst/heart_burst.dart';
 import 'package:poise_registry/reveal/reveal.dart';
 import 'package:poise_registry/success_check/success_check.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
@@ -41,6 +42,7 @@ void main() {
   testWidgets('shows every event', (tester) async {
     await pumpGather(tester);
     expect(find.byType(EventCard), findsNWidgets(sampleEvents.length));
+    expect(find.byType(HeartBurst), findsNWidgets(sampleEvents.length));
   });
 
   testWidgets('the dial changes the whole screen\'s personality', (

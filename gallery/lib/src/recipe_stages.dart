@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:poise_registry/count_up/count_up.dart';
+import 'package:poise_registry/heart_burst/heart_burst.dart';
 import 'package:poise_registry/poise_sheet/poise_sheet.dart';
 import 'package:poise_registry/reveal/reveal.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
@@ -39,6 +40,7 @@ final class RecipeStage extends StatelessWidget {
         GalleryRecipe.countUp => const _CountUpStage(),
         GalleryRecipe.successCheck => const _SuccessCheckStage(),
         GalleryRecipe.shake => const _ShakeStage(),
+        GalleryRecipe.heartBurst => const _HeartBurstStage(),
         GalleryRecipe.staggeredColumn => _StaggerStage(replayKey: replayKey),
       },
     ),
@@ -192,6 +194,53 @@ final class _SuccessCheckStageState extends State<_SuccessCheckStage> {
         onTap: () => setState(() => _paid = !_paid),
       ),
       const SizedBox(height: 16),
+    ],
+  );
+}
+
+final class _HeartBurstStage extends StatefulWidget {
+  const _HeartBurstStage();
+
+  @override
+  State<_HeartBurstStage> createState() => _HeartBurstStageState();
+}
+
+final class _HeartBurstStageState extends State<_HeartBurstStage> {
+  var _liked = false;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      const SizedBox(height: 80),
+      Semantics(
+        button: true,
+        label: _liked ? 'Unlike' : 'Like',
+        excludeSemantics: true,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => setState(() => _liked = !_liked),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: HeartBurst(
+              liked: _liked,
+              child: Icon(
+                _liked ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+                size: 72,
+                color: _liked
+                    ? GatherColors.accent
+                    : GatherColors.secondaryText,
+              ),
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(height: 24),
+      const Text(
+        'Tap the heart. Tap again to take it back.',
+        style: GatherType.detail,
+      ),
+      const SizedBox(height: 64),
     ],
   );
 }
