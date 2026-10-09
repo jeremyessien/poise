@@ -36,7 +36,9 @@ final class GalleryTour extends ChangeNotifier {
   static bool isTourTouch(PointerEvent event) => event.device == device;
 
   static const _beat = Duration(milliseconds: 900);
-  static var _nextPointer = 1;
+
+  /// Far above the ids the engine gives real fingers, so the two never meet.
+  static var _nextPointer = 1 << 30;
 
   TourCaption _caption = (title: '', line: '');
   var _showsCaption = false;
@@ -272,11 +274,28 @@ final class GalleryTour extends ChangeNotifier {
     GestureBinding.instance.handlePointerEvent(
       PointerDownEvent(pointer: pointer, device: device, position: position),
     );
-    await _pause(hold);
-    GestureBinding.instance.handlePointerEvent(
-      PointerUpEvent(pointer: pointer, device: device, position: position),
-    );
+    var lifted = false;
+    try {
+      await _pause(hold);
+      GestureBinding.instance.handlePointerEvent(
+        PointerUpEvent(pointer: pointer, device: device, position: position),
+      );
+      lifted = true;
+    } finally {
+      if (!lifted) _cancel(pointer, position);
+    }
   }
+
+  /// Takes the tour's finger away without it counting as a tap, for when the
+  /// tour is stopped mid-gesture.
+  void _cancel(int pointer, Offset position) =>
+      GestureBinding.instance.handlePointerEvent(
+        PointerCancelEvent(
+          pointer: pointer,
+          device: device,
+          position: position,
+        ),
+      );
 
   /// Drags [target] by [by], moving a frame at a time over [over] so the
   /// gesture has a real speed when it lets go.
@@ -293,22 +312,28 @@ final class GalleryTour extends ChangeNotifier {
       PointerDownEvent(pointer: pointer, device: device, position: start),
     );
     var position = start;
-    for (var i = 1; i <= steps; i++) {
-      await _pause(step);
-      final next = start + by * (i / steps);
+    var lifted = false;
+    try {
+      for (var i = 1; i <= steps; i++) {
+        await _pause(step);
+        final next = start + by * (i / steps);
+        GestureBinding.instance.handlePointerEvent(
+          PointerMoveEvent(
+            pointer: pointer,
+            device: device,
+            position: next,
+            delta: next - position,
+          ),
+        );
+        position = next;
+      }
       GestureBinding.instance.handlePointerEvent(
-        PointerMoveEvent(
-          pointer: pointer,
-          device: device,
-          position: next,
-          delta: next - position,
-        ),
+        PointerUpEvent(pointer: pointer, device: device, position: position),
       );
-      position = next;
+      lifted = true;
+    } finally {
+      if (!lifted) _cancel(pointer, position);
     }
-    GestureBinding.instance.handlePointerEvent(
-      PointerUpEvent(pointer: pointer, device: device, position: position),
-    );
   }
 
   Future<void> _turnDial(Personality personality) =>

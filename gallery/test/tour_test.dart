@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gallery/src/gather/event_details.dart';
+import 'package:gallery/src/gather/event_card.dart';
+import 'package:gallery/src/touches.dart';
 import 'package:gallery/src/app.dart';
 import 'package:gallery/src/gather/gather_screen.dart';
 import 'package:gallery/src/menu_page.dart';
@@ -105,5 +108,33 @@ void main() {
     expect(tour.isRunning, isFalse);
     expect(tour.showsCaption, isFalse);
     await tester.pumpAndSettle();
+  });
+
+  testWidgets('stopping mid-press lifts the tour\'s finger', (tester) async {
+    final tour = await pumpApp(tester);
+    final pressing = find.descendant(
+      of: find.byType(ShowTouches),
+      matching: find.byWidgetPredicate(
+        (widget) => widget is AnimatedOpacity && widget.opacity == 1,
+      ),
+    );
+    unawaited(tour.play());
+    for (var frame = 0; frame < 600 && pressing.evaluate().isEmpty; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    expect(pressing, findsOneWidget, reason: 'the tour should be pressing');
+
+    await tester.tapAt(const Offset(390, 860));
+    await tester.pumpAndSettle();
+    expect(tour.isRunning, isFalse);
+    expect(pressing, findsNothing, reason: 'no touch should be left down');
+
+    await tester.tap(find.byType(EventCard).first);
+    await tester.pumpAndSettle();
+    expect(
+      find.text(EventDetails.heading),
+      findsOneWidget,
+      reason: 'real taps should still work',
+    );
   });
 }
