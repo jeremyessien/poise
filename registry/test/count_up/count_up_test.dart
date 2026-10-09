@@ -85,4 +85,31 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('never counts past where it is going, even when bouncy', (
+    tester,
+  ) async {
+    Future<void> pumpPlayful(num value) => tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: PoiseScope(
+          motion: PoiseMotion.playful,
+          child: Center(child: CountUp(value: value)),
+        ),
+      ),
+    );
+
+    await pumpPlayful(0);
+    await pumpPlayful(100);
+    for (var frame = 0; frame < 60; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(shown(tester), lessThanOrEqualTo(100));
+    }
+
+    await pumpPlayful(0);
+    for (var frame = 0; frame < 60; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(shown(tester), greaterThanOrEqualTo(0));
+    }
+  });
 }

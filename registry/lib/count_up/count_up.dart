@@ -44,8 +44,17 @@ final class _CountUpState extends State<CountUp>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _feel = context.motion.change;
+    _feel = _withoutBounce(context.motion.change);
   }
+
+  /// Counts at the personality's pace but never bounces: a number that
+  /// overshoots shows a value that isn't true, like -1 spots left.
+  static Feel _withoutBounce(Feel feel) => switch (feel) {
+    Move(:final perceivedDuration) => Move(
+      perceivedDuration: perceivedDuration,
+    ),
+    Fade() => feel,
+  };
 
   @override
   void didUpdateWidget(CountUp oldWidget) {

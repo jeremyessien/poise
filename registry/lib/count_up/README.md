@@ -13,4 +13,4 @@ Whole numbers count in whole steps. If the value has decimals, give it a format 
 
 Digits are drawn at equal widths while it counts, so the number doesn't jiggle from side to side as 1 turns into 8. Screen readers hear only the number it lands on, not every number on the way.
 
-If the value changes again while it's still counting, it carries on from where it is. When the phone asks for less motion it doesn't count at all: the new number fades in through `TextSwap`, which is why this recipe needs the `text_swap` folder copied alongside it.
+It counts at your personality's pace but never bounces, even in playful, because a number that overshoots shows something untrue for a moment, like -1 spots left. If the value changes again while it's still counting, it carries on from where it is. When the phone asks for less motion it doesn't count at all: the new number fades in through `TextSwap`, which is why this recipe needs the `text_swap` folder copied alongside it.
