@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:poise_registry/poise_sheet/poise_sheet.dart';
 import 'package:poise_registry/pressable/pressable.dart';
 import 'package:poise_registry/reveal/reveal.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
 
 import 'gather/event_card.dart';
+import 'gather/event_details.dart';
 import 'gather/events.dart';
 import 'gather/gather_style.dart';
 import 'gather/gather_toast.dart';
@@ -28,6 +30,7 @@ final class RecipeStage extends StatelessWidget {
       child: switch (recipe) {
         GalleryRecipe.pressable => const _PressableStage(),
         GalleryRecipe.reveal => const _RevealStage(),
+        GalleryRecipe.poiseSheet => const _SheetStage(),
         GalleryRecipe.staggeredColumn => _StaggerStage(replayKey: replayKey),
       },
     ),
@@ -89,6 +92,56 @@ final class _RevealStageState extends State<_RevealStage> {
         style: GatherType.detail,
       ),
     ],
+  );
+}
+
+final class _SheetStage extends StatefulWidget {
+  const _SheetStage();
+
+  @override
+  State<_SheetStage> createState() => _SheetStageState();
+}
+
+final class _SheetStageState extends State<_SheetStage> {
+  var _open = false;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 420,
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              EventCard(
+                event: sampleEvents[1],
+                saved: false,
+                onOpen: () => setState(() => _open = true),
+                onToggleSaved: () {},
+              ),
+              const SizedBox(height: 20),
+              StageButton(
+                label: 'Open details',
+                onTap: () => setState(() => _open = true),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Drag it, nudge it, or throw it away',
+                style: GatherType.detail,
+              ),
+            ],
+          ),
+          Positioned.fill(
+            child: PoiseSheet(
+              open: _open,
+              onClose: () => setState(() => _open = false),
+              child: EventDetails(event: sampleEvents[1]),
+            ),
+          ),
+        ],
+      ),
+    ),
   );
 }
 

@@ -25,6 +25,18 @@ Reveal(
   child: const SavedToast(),
 )''',
   ),
+  poiseSheet(
+    'PoiseSheet',
+    'A bottom sheet you can drag and throw, which settles from the speed your '
+        'finger let go at.',
+    [MotionWord.follow, MotionWord.enter, MotionWord.exit],
+    '''
+PoiseSheet(
+  open: showDetails,
+  onClose: () => setState(() => showDetails = false),
+  child: EventDetails(event: event),
+)''',
+  ),
   staggeredColumn(
     'StaggeredColumn',
     'A column whose children arrive one after another, spaced by the '
