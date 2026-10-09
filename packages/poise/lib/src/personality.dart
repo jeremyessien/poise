@@ -56,60 +56,60 @@ final class PoiseMotion {
   /// Settled and quiet, for products where trust and focus matter more than
   /// delight. Only [attention] bounces.
   static const calm = PoiseMotion(
-    feedback: Move(perceivedDuration: Duration(milliseconds: 120)),
-    enter: Move(perceivedDuration: Duration(milliseconds: 300)),
-    exit: Move(perceivedDuration: Duration(milliseconds: 200)),
-    transition: Move(perceivedDuration: Duration(milliseconds: 350)),
-    change: Fade(duration: Duration(milliseconds: 200)),
+    feedback: Move(perceivedDuration: Duration(milliseconds: 140)),
+    enter: Move(perceivedDuration: Duration(milliseconds: 400)),
+    exit: Move(perceivedDuration: Duration(milliseconds: 260)),
+    transition: Move(perceivedDuration: Duration(milliseconds: 420)),
+    change: Fade(duration: Duration(milliseconds: 240)),
     attention: Move(
-      perceivedDuration: Duration(milliseconds: 250),
+      perceivedDuration: Duration(milliseconds: 300),
       bounce: 0.3,
     ),
-    celebrate: Move(perceivedDuration: Duration(milliseconds: 400)),
-    follow: Move(perceivedDuration: Duration(milliseconds: 300)),
-    loop: Fade(duration: Duration(milliseconds: 1200)),
-    stagger: Duration(milliseconds: 40),
+    celebrate: Move(perceivedDuration: Duration(milliseconds: 500)),
+    follow: Move(perceivedDuration: Duration(milliseconds: 350)),
+    loop: Fade(duration: Duration(milliseconds: 1600)),
+    stagger: Duration(milliseconds: 60),
   );
 
   /// Quick and exact, for banking, productivity and tools. Only [attention]
   /// bounces.
   static const crisp = PoiseMotion(
-    feedback: Move(perceivedDuration: Duration(milliseconds: 80)),
-    enter: Move(perceivedDuration: Duration(milliseconds: 220)),
-    exit: Move(perceivedDuration: Duration(milliseconds: 150)),
-    transition: Move(perceivedDuration: Duration(milliseconds: 280)),
+    feedback: Move(perceivedDuration: Duration(milliseconds: 70)),
+    enter: Move(perceivedDuration: Duration(milliseconds: 200)),
+    exit: Move(perceivedDuration: Duration(milliseconds: 140)),
+    transition: Move(perceivedDuration: Duration(milliseconds: 260)),
     change: Fade(duration: Duration(milliseconds: 120)),
     attention: Move(
-      perceivedDuration: Duration(milliseconds: 200),
-      bounce: 0.2,
+      perceivedDuration: Duration(milliseconds: 180),
+      bounce: 0.25,
     ),
-    celebrate: Move(perceivedDuration: Duration(milliseconds: 300)),
-    follow: Move(perceivedDuration: Duration(milliseconds: 220)),
-    loop: Fade(duration: Duration(milliseconds: 1000)),
-    stagger: Duration(milliseconds: 25),
+    celebrate: Move(perceivedDuration: Duration(milliseconds: 260)),
+    follow: Move(perceivedDuration: Duration(milliseconds: 200)),
+    loop: Fade(duration: Duration(milliseconds: 900)),
+    stagger: Duration(milliseconds: 20),
   );
 
   /// Springy and alive, for kids' apps, games and social.
   static const playful = PoiseMotion(
-    feedback: Move(perceivedDuration: Duration(milliseconds: 150), bounce: 0.3),
-    enter: Move(perceivedDuration: Duration(milliseconds: 400), bounce: 0.25),
-    exit: Move(perceivedDuration: Duration(milliseconds: 250)),
+    feedback: Move(perceivedDuration: Duration(milliseconds: 160), bounce: 0.4),
+    enter: Move(perceivedDuration: Duration(milliseconds: 450), bounce: 0.35),
+    exit: Move(perceivedDuration: Duration(milliseconds: 260)),
     transition: Move(
-      perceivedDuration: Duration(milliseconds: 450),
-      bounce: 0.15,
+      perceivedDuration: Duration(milliseconds: 500),
+      bounce: 0.2,
     ),
-    change: Move(perceivedDuration: Duration(milliseconds: 300), bounce: 0.2),
+    change: Move(perceivedDuration: Duration(milliseconds: 320), bounce: 0.3),
     attention: Move(
-      perceivedDuration: Duration(milliseconds: 300),
-      bounce: 0.4,
+      perceivedDuration: Duration(milliseconds: 340),
+      bounce: 0.5,
     ),
     celebrate: Move(
-      perceivedDuration: Duration(milliseconds: 500),
-      bounce: 0.4,
+      perceivedDuration: Duration(milliseconds: 550),
+      bounce: 0.5,
     ),
-    follow: Move(perceivedDuration: Duration(milliseconds: 350), bounce: 0.25),
-    loop: Move(perceivedDuration: Duration(milliseconds: 800), bounce: 0.3),
-    stagger: Duration(milliseconds: 60),
+    follow: Move(perceivedDuration: Duration(milliseconds: 380), bounce: 0.35),
+    loop: Move(perceivedDuration: Duration(milliseconds: 900), bounce: 0.35),
+    stagger: Duration(milliseconds: 90),
   );
 
   /// What every app gets when the phone asks for less motion. Nothing
