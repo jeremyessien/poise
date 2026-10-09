@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
 import 'gather/event_card.dart';
+import 'gather/event_details.dart';
 import 'recipes.dart';
 import 'settings.dart';
 import 'theme.dart';
@@ -97,7 +98,23 @@ final class GalleryTour extends ChangeNotifier {
     _sayWord(MotionWord.feedback);
     await _pause(_beat);
     await _tap(_find<EventCard>(), hold: const Duration(milliseconds: 600));
+    await _pause(const Duration(milliseconds: 1200));
+
+    _sayWord(MotionWord.follow);
     await _pause(_beat);
+    await _drag(
+      _findText(EventDetails.heading),
+      by: const Offset(0, 60),
+      over: const Duration(milliseconds: 500),
+    );
+    await _pause(const Duration(milliseconds: 1200));
+    _say('follow', 'Pull it far enough and it goes');
+    await _drag(
+      _findText(EventDetails.heading),
+      by: const Offset(0, 320),
+      over: const Duration(milliseconds: 450),
+    );
+    await _pause(const Duration(milliseconds: 1200));
 
     _sayWord(MotionWord.enter);
     await _pause(_beat);
@@ -218,6 +235,39 @@ final class GalleryTour extends ChangeNotifier {
       PointerDownEvent(pointer: pointer, device: device, position: position),
     );
     await _pause(hold);
+    GestureBinding.instance.handlePointerEvent(
+      PointerUpEvent(pointer: pointer, device: device, position: position),
+    );
+  }
+
+  /// Drags [target] by [by], moving a frame at a time over [over] so the
+  /// gesture has a real speed when it lets go.
+  Future<void> _drag(
+    RenderBox target, {
+    required Offset by,
+    required Duration over,
+  }) async {
+    const step = Duration(milliseconds: 16);
+    final start = target.localToGlobal(target.size.center(Offset.zero));
+    final steps = math.max(1, over.inMilliseconds ~/ step.inMilliseconds);
+    final pointer = _nextPointer++;
+    GestureBinding.instance.handlePointerEvent(
+      PointerDownEvent(pointer: pointer, device: device, position: start),
+    );
+    var position = start;
+    for (var i = 1; i <= steps; i++) {
+      await _pause(step);
+      final next = start + by * (i / steps);
+      GestureBinding.instance.handlePointerEvent(
+        PointerMoveEvent(
+          pointer: pointer,
+          device: device,
+          position: next,
+          delta: next - position,
+        ),
+      );
+      position = next;
+    }
     GestureBinding.instance.handlePointerEvent(
       PointerUpEvent(pointer: pointer, device: device, position: position),
     );

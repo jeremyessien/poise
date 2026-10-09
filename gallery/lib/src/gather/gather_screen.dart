@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:poise/poise.dart';
+import 'package:poise_registry/poise_sheet/poise_sheet.dart';
 import 'package:poise_registry/reveal/reveal.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
 
 import '../theme.dart';
 import 'event_card.dart';
+import 'event_details.dart';
 import 'events.dart';
 import 'gather_style.dart';
 import 'gather_toast.dart';
@@ -25,6 +27,8 @@ final class _GatherScreenState extends State<GatherScreen> {
 
   var _personality = Personality.calm;
   final _saved = <int>{};
+  int? _opened;
+  var _sheetOpen = false;
   var _toastVisible = false;
   var _toastText = '';
   Timer? _toastTimer;
@@ -79,7 +83,10 @@ final class _GatherScreenState extends State<GatherScreen> {
                           child: EventCard(
                             event: event,
                             saved: _saved.contains(index),
-                            onOpen: () {},
+                            onOpen: () => setState(() {
+                              _opened = index;
+                              _sheetOpen = true;
+                            }),
                             onToggleSaved: () => _toggleSaved(index),
                           ),
                         ),
@@ -115,6 +122,16 @@ final class _GatherScreenState extends State<GatherScreen> {
                     ),
                   ),
                 ),
+              ),
+            ),
+            Positioned.fill(
+              child: PoiseSheet(
+                open: _sheetOpen,
+                onClose: () => setState(() => _sheetOpen = false),
+                child: switch (_opened) {
+                  final index? => EventDetails(event: sampleEvents[index]),
+                  null => const SizedBox.shrink(),
+                },
               ),
             ),
           ],

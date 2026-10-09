@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gallery/src/gather/event_card.dart';
+import 'package:gallery/src/gather/event_details.dart';
 import 'package:gallery/src/gather/events.dart';
 import 'package:gallery/src/gather/gather_screen.dart';
 import 'package:gallery/src/settings.dart';
@@ -137,5 +138,26 @@ void main() {
     await finger.up();
     await tester.pumpAndSettle();
     expect(circles, findsNothing);
+  });
+
+  testWidgets('tapping a card opens its details, pulling them down closes', (
+    tester,
+  ) async {
+    await pumpGather(tester);
+    final details = find.text(EventDetails.heading);
+    expect(details, findsNothing);
+
+    await tester.tap(find.byType(EventCard).first);
+    await tester.pumpAndSettle();
+    expect(details, findsOneWidget);
+    expect(find.text(sampleEvents.first.title), findsNWidgets(2));
+
+    await tester.timedDrag(
+      details,
+      const Offset(0, 400),
+      const Duration(milliseconds: 600),
+    );
+    await tester.pumpAndSettle();
+    expect(details, findsNothing);
   });
 }
