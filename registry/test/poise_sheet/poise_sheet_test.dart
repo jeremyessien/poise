@@ -133,6 +133,33 @@ void main() {
     expect(closeRequests, 1);
   });
 
+  testWidgets('a quick flick up keeps it open, however far it was pulled', (
+    tester,
+  ) async {
+    await pumpSheet(tester);
+    final resting = await openAndSettle(tester);
+
+    final finger = await tester.createGesture();
+    var time = Duration.zero;
+    await finger.down(tester.getCenter(contentFinder), timeStamp: time);
+    for (var step = 0; step < 12; step++) {
+      time += const Duration(milliseconds: 20);
+      await finger.moveBy(const Offset(0, 15), timeStamp: time);
+      await tester.pump(const Duration(milliseconds: 20));
+    }
+    time += const Duration(milliseconds: 60);
+    for (var step = 0; step < 3; step++) {
+      time += const Duration(milliseconds: 8);
+      await finger.moveBy(const Offset(0, -20), timeStamp: time);
+      await tester.pump(const Duration(milliseconds: 8));
+    }
+    await finger.up(timeStamp: time);
+    await tester.pumpAndSettle();
+
+    expect(closeRequests, 0);
+    expect(tester.getTopLeft(contentFinder).dy, closeTo(resting, 0.5));
+  });
+
   testWidgets('springs back up if the parent keeps it open', (tester) async {
     honourClose = false;
     await pumpSheet(tester);

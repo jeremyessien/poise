@@ -145,12 +145,15 @@ final class _PoiseSheetState extends State<PoiseSheet>
     _shown.value = (_shown.value - pulled * resistance).clamp(0.0, furthest);
   }
 
+  /// A flick decides by its direction alone; without one, how far the sheet
+  /// was pulled decides.
   void _released(DragEndDetails details) {
-    final speed = -(details.primaryVelocity ?? 0) / _height;
-    final flickedDown = (details.primaryVelocity ?? 0) > _flickSpeed;
+    final downward = details.primaryVelocity ?? 0;
+    final flickedUp = downward < -_flickSpeed;
+    final flickedDown = downward > _flickSpeed;
     final pulledFar = _shown.value < 1 - _pulledFarEnough;
-    _releaseSpeed = speed;
-    if (flickedDown || pulledFar) {
+    _releaseSpeed = -downward / _height;
+    if (!flickedUp && (flickedDown || pulledFar)) {
       widget.onClose();
       WidgetsBinding.instance
         ..addPostFrameCallback((_) {
