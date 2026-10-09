@@ -28,6 +28,7 @@ final class EventDetails extends StatelessWidget {
     required this.event,
     required this.joinState,
     required this.onJoin,
+    required this.onOpenPage,
     this.spotsLeft,
   });
 
@@ -37,6 +38,9 @@ final class EventDetails extends StatelessWidget {
   final GatherEvent event;
   final JoinState joinState;
   final VoidCallback onJoin;
+  final VoidCallback onOpenPage;
+
+  static const seeFullEvent = 'See full event';
 
   /// Spots still open, when it differs from the event's own count because
   /// someone joined.
@@ -65,7 +69,15 @@ final class EventDetails extends StatelessWidget {
             format: spotsLeftLabel,
           ),
         ),
-        const SizedBox(height: 16),
+        CupertinoButton(
+          padding: const EdgeInsets.only(top: 12),
+          onPressed: onOpenPage,
+          child: const Text(
+            seeFullEvent,
+            style: TextStyle(color: GatherColors.accent),
+          ),
+        ),
+        const SizedBox(height: 8),
         const PromoCode(),
         const SizedBox(height: 16),
         GatherButton(

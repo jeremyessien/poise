@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:poise/poise.dart';
 import 'package:poise_registry/count_up/count_up.dart';
 import 'package:poise_registry/heart_burst/heart_burst.dart';
+import 'package:poise_registry/poise_route/poise_route.dart';
 import 'package:poise_registry/poise_sheet/poise_sheet.dart';
 import 'package:poise_registry/reveal/reveal.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
@@ -9,6 +11,7 @@ import 'package:poise_registry/text_swap/text_swap.dart';
 
 import 'gather/event_card.dart';
 import 'gather/event_details.dart';
+import 'gather/event_page.dart';
 import 'gather/events.dart';
 import 'gather/gather_button.dart';
 import 'gather/gather_style.dart';
@@ -41,6 +44,7 @@ final class RecipeStage extends StatelessWidget {
         GalleryRecipe.successCheck => const _SuccessCheckStage(),
         GalleryRecipe.shake => const _ShakeStage(),
         GalleryRecipe.heartBurst => const _HeartBurstStage(),
+        GalleryRecipe.poiseRoute => const _RouteStage(),
         GalleryRecipe.staggeredColumn => _StaggerStage(replayKey: replayKey),
       },
     ),
@@ -198,6 +202,46 @@ final class _SuccessCheckStageState extends State<_SuccessCheckStage> {
   );
 }
 
+final class _RouteStage extends StatelessWidget {
+  const _RouteStage();
+
+  @override
+  Widget build(BuildContext context) {
+    final motion = context.motion;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 24),
+        EventCard(
+          event: sampleEvents[2],
+          saved: false,
+          onOpen: () => _open(context, motion),
+          onToggleSaved: () {},
+        ),
+        const SizedBox(height: 24),
+        GatherButton(
+          label: const Text('Open the event page'),
+          onTap: () => _open(context, motion),
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'On an iPhone, swipe back from the left edge',
+          style: GatherType.detail,
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  void _open(BuildContext context, PoiseMotion motion) =>
+      Navigator.of(context).push(
+        PoiseRoute<void>(
+          motion: motion,
+          builder: (_) => EventPage(event: sampleEvents[2]),
+        ),
+      );
+}
+
 final class _HeartBurstStage extends StatefulWidget {
   const _HeartBurstStage();
 
@@ -309,6 +353,7 @@ final class _SheetStageState extends State<_SheetStage> {
                 event: sampleEvents[1],
                 joinState: JoinState.open,
                 onJoin: () {},
+                onOpenPage: () {},
               ),
             ),
           ),

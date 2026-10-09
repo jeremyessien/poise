@@ -131,6 +131,11 @@ final class GalleryTour extends ChangeNotifier {
     await _pause(_beat);
     await _tap(_findText(PromoCode.apply));
     await _pause(const Duration(milliseconds: 1400));
+    _sayWord(MotionWord.transition);
+    await _pause(_beat);
+    await _tap(_findText(EventDetails.seeFullEvent));
+    await _pause(const Duration(milliseconds: 1600));
+    await _back();
     await _drag(
       _findText(EventDetails.heading),
       by: const Offset(0, 320),

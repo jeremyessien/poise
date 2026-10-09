@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gallery/src/gather/event_card.dart';
 import 'package:gallery/src/gather/event_details.dart';
+import 'package:gallery/src/gather/event_page.dart';
 import 'package:gallery/src/gather/promo_code.dart';
 import 'package:gallery/src/gather/events.dart';
 import 'package:gallery/src/gather/gather_screen.dart';
@@ -207,5 +208,23 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(PromoCode.worked), findsOneWidget);
     expect(find.text(PromoCode.didNotWork), findsNothing);
+  });
+
+  testWidgets('See full event opens the event page, and back returns', (
+    tester,
+  ) async {
+    await pumpGather(tester);
+    await tester.tap(find.byType(EventCard).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(EventDetails.seeFullEvent));
+    await tester.pumpAndSettle();
+    expect(find.byType(EventPage), findsOneWidget);
+    expect(find.text(sampleEvents.first.about), findsOneWidget);
+
+    await tester.tap(find.byIcon(CupertinoIcons.chevron_back));
+    await tester.pumpAndSettle();
+    expect(find.byType(EventPage), findsNothing);
+    expect(find.text(EventDetails.heading), findsOneWidget);
   });
 }

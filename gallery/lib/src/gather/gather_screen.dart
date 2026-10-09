@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:poise/poise.dart';
+import 'package:poise_registry/poise_route/poise_route.dart';
 import 'package:poise_registry/poise_sheet/poise_sheet.dart';
 import 'package:poise_registry/reveal/reveal.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
@@ -10,6 +11,7 @@ import 'package:poise_registry/staggered_column/staggered_column.dart';
 import '../theme.dart';
 import 'event_card.dart';
 import 'event_details.dart';
+import 'event_page.dart';
 import 'events.dart';
 import 'gather_style.dart';
 import 'gather_toast.dart';
@@ -155,6 +157,12 @@ final class _GatherScreenState extends State<GatherScreen> {
                     joinState: _joins[index] ?? JoinState.open,
                     spotsLeft: _spotsLeft(index),
                     onJoin: () => _join(index),
+                    onOpenPage: () => Navigator.of(context).push(
+                      PoiseRoute<void>(
+                        motion: _personality.motion,
+                        builder: (_) => EventPage(event: sampleEvents[index]),
+                      ),
+                    ),
                   ),
                   null => const SizedBox.shrink(),
                 },

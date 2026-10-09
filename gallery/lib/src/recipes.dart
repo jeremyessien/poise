@@ -96,6 +96,16 @@ HeartBurst(
   child: Icon(saved ? CupertinoIcons.heart_fill : CupertinoIcons.heart),
 )''',
   ),
+  poiseRoute(
+    'PoiseRoute',
+    'A page route that slides between screens in your personality, and keeps '
+        'the swipe back on iOS.',
+    [MotionWord.transition, MotionWord.exit],
+    '''
+Navigator.of(context).push(
+  PoiseRoute(builder: (context) => EventPage(event: event)),
+)''',
+  ),
   staggeredColumn(
     'StaggeredColumn',
     'A column whose children arrive one after another, spaced by the '
