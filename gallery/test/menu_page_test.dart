@@ -1,10 +1,13 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gallery/src/app.dart';
-import 'package:gallery/src/words_page.dart';
+import 'package:gallery/src/gather/gather_screen.dart';
+import 'package:gallery/src/menu_page.dart';
 import 'package:gallery/src/recipe_page.dart';
 import 'package:gallery/src/recipes.dart';
 import 'package:gallery/src/settings.dart';
+import 'package:gallery/src/tour_overlay.dart';
+import 'package:gallery/src/words_page.dart';
 
 void main() {
   late GallerySettings settings;
@@ -20,6 +23,16 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('poise'));
     await tester.pumpAndSettle();
+  }
+
+  Future<void> tapRow(WidgetTester tester, String title) async {
+    await tester.scrollUntilVisible(
+      find.text(title),
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(title));
   }
 
   testWidgets('the poise mark opens the menu with every recipe', (
@@ -48,23 +61,47 @@ void main() {
   testWidgets('the words row opens the list of words', (tester) async {
     final semantics = tester.ensureSemantics();
     await openMenu(tester);
-    await tester.tap(find.text('Every word poise uses'));
+    await tapRow(tester, 'Every word poise uses');
     await tester.pumpAndSettle();
     expect(find.byType(WordsPage), findsOneWidget);
     semantics.dispose();
   });
 
-  testWidgets('the switches change the settings', (tester) async {
+  testWidgets('tapping a switch row changes its setting', (tester) async {
     final semantics = tester.ensureSemantics();
     await openMenu(tester);
-    await tester.tap(find.byType(CupertinoSwitch).at(1));
+    await tapRow(tester, 'Reduce motion');
     await tester.pumpAndSettle();
     expect(settings.reduceMotion, isTrue);
 
-    await tester.tap(find.byType(CupertinoSwitch).first);
+    await tapRow(tester, 'Show touches');
+    await tester.pumpAndSettle();
+    expect(settings.showTouches, isTrue);
+
+    await tapRow(tester, 'Slow motion');
     await tester.pump();
     expect(settings.slowMotion, isTrue);
     settings.slowMotion = false;
+    semantics.dispose();
+  });
+
+  testWidgets('the tour row goes home and starts the tour', (tester) async {
+    final semantics = tester.ensureSemantics();
+    await openMenu(tester);
+    final tour = GalleryTourScope.of(tester.element(find.byType(MenuPage)));
+    await tapRow(tester, 'Play the tour');
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(tour.isRunning, isTrue);
+    expect(find.byType(MenuPage), findsNothing);
+    expect(find.byType(GatherScreen), findsOneWidget);
+    expect(settings.showTouches, isTrue);
+
+    tour.stop();
+    await tester.pumpAndSettle();
+    expect(tour.isRunning, isFalse);
+    expect(settings.showTouches, isFalse);
     semantics.dispose();
   });
 }

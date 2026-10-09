@@ -1,4 +1,5 @@
 import 'feel.dart';
+import 'words.dart';
 
 /// A personality: the feel behind each of poise's ten motion words.
 ///
@@ -128,6 +129,21 @@ final class PoiseMotion {
     reducesMotion: true,
   );
 
+  /// The feel behind [word], or null for [MotionWord.stagger], which is a
+  /// gap between feels rather than a feel of its own: see [stagger].
+  Feel? feelOf(MotionWord word) => switch (word) {
+    MotionWord.feedback => feedback,
+    MotionWord.enter => enter,
+    MotionWord.exit => exit,
+    MotionWord.transition => transition,
+    MotionWord.change => change,
+    MotionWord.attention => attention,
+    MotionWord.celebrate => celebrate,
+    MotionWord.follow => follow,
+    MotionWord.loop => loop,
+    MotionWord.stagger => null,
+  };
+
   PoiseMotion copyWith({
     Feel? feedback,
     Feel? enter,
@@ -151,5 +167,35 @@ final class PoiseMotion {
     loop: loop ?? this.loop,
     stagger: stagger ?? this.stagger,
     reducesMotion: reducesMotion,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      other is PoiseMotion &&
+      other.feedback == feedback &&
+      other.enter == enter &&
+      other.exit == exit &&
+      other.transition == transition &&
+      other.change == change &&
+      other.attention == attention &&
+      other.celebrate == celebrate &&
+      other.follow == follow &&
+      other.loop == loop &&
+      other.stagger == stagger &&
+      other.reducesMotion == reducesMotion;
+
+  @override
+  int get hashCode => Object.hash(
+    feedback,
+    enter,
+    exit,
+    transition,
+    change,
+    attention,
+    celebrate,
+    follow,
+    loop,
+    stagger,
+    reducesMotion,
   );
 }

@@ -56,10 +56,4 @@ void main() {
     expect(settings.showTouches, isTrue);
     expect(told, 1);
   });
-
-  test('requesting a tour counts up', () {
-    settings.requestTour();
-    settings.requestTour();
-    expect(settings.toursRequested, 2);
-  });
 }

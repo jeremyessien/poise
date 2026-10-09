@@ -8,3 +8,6 @@ workspace:
   - packages/poise
   - registry
   - gallery
+
+dev_dependencies:
+  flutter_lints: ^6.0.0

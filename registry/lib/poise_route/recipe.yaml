@@ -1,0 +1,8 @@
+name: poise_route
+title: PoiseRoute
+summary: A page route that slides between screens in your personality, and keeps the swipe back on iOS.
+words: [transition, exit]
+files:
+  - poise_route.dart
+needs: []
+since: 0.1.0

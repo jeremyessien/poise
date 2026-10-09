@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:poise/poise.dart';
 
 /// Makes any widget respond to a press using the `feedback` motion word.
@@ -30,8 +30,14 @@ final class _PressableState extends State<Pressable>
     with SingleTickerProviderStateMixin {
   static const _pressedScale = 0.97;
 
-  late final AnimationController _press = AnimationController(vsync: this);
+  late final AnimationController _press;
   late Feel _feel;
+
+  @override
+  void initState() {
+    super.initState();
+    _press = AnimationController(vsync: this);
+  }
 
   @override
   void dispose() {

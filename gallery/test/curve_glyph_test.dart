@@ -19,8 +19,8 @@ void main() {
 
   test('every word has its own address', () {
     for (final word in MotionWord.values) {
-      expect(MotionWord.fromPath(word.path), word);
+      expect(GalleryWord.fromPath(word.path), word);
     }
-    expect(MotionWord.fromPath('/nowhere'), isNull);
+    expect(GalleryWord.fromPath('/nowhere'), isNull);
   });
 }

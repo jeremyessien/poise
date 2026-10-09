@@ -2,21 +2,30 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:poise/poise.dart';
+import 'package:poise_registry/poise_route/poise_route.dart';
+import 'package:poise_registry/poise_sheet/poise_sheet.dart';
 import 'package:poise_registry/reveal/reveal.dart';
+import 'package:poise_registry/shimmer/shimmer.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
 
-import '../settings.dart';
 import '../theme.dart';
-import '../tour.dart';
-import '../words.dart';
 import 'event_card.dart';
+import 'event_details.dart';
+import 'event_page.dart';
+import 'event_skeleton.dart';
 import 'events.dart';
 import 'gather_style.dart';
+import 'gather_toast.dart';
 import 'personality_dial.dart';
 
 final class GatherScreen extends StatefulWidget {
   const GatherScreen({super.key});
+
+  /// What a screen reader announces for the refresh button, and what the
+  /// tour presses.
+  static const refreshLabel = 'Refresh events';
 
   @override
   State<GatherScreen> createState() => _GatherScreenState();
@@ -24,110 +33,57 @@ final class GatherScreen extends StatefulWidget {
 
 final class _GatherScreenState extends State<GatherScreen> {
   static const _toastStays = Duration(milliseconds: 1800);
+  static const _joinTakes = Duration(milliseconds: 900);
+  static const _loadingTakes = Duration(milliseconds: 1200);
 
   var _personality = Personality.calm;
   final _saved = <int>{};
-  final _firstCard = GlobalKey();
-  final _secondHeart = GlobalKey();
-  final _dial = GlobalKey();
-  var _toursSeen = 0;
-  var _touring = false;
-  var _cascades = 0;
-  var _tourCaption = (title: '', line: '');
-  var _captionShowing = false;
+  var _loading = true;
+  Timer? _loadingTimer;
+  int? _opened;
+  final _joins = <int, JoinState>{};
+  final _joinTimers = <int, Timer>{};
+  var _sheetOpen = false;
   var _toastVisible = false;
   var _toastText = '';
   Timer? _toastTimer;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final requested = GallerySettingsScope.of(context).toursRequested;
-    if (requested > _toursSeen) {
-      _toursSeen = requested;
-      _playTour();
-    }
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  void _load() {
+    setState(() => _loading = true);
+    _loadingTimer?.cancel();
+    _loadingTimer = Timer(_loadingTakes * timeDilation, () {
+      if (mounted) setState(() => _loading = false);
+    });
   }
 
   @override
   void dispose() {
+    _loadingTimer?.cancel();
+    for (final timer in _joinTimers.values) {
+      timer.cancel();
+    }
     _toastTimer?.cancel();
     super.dispose();
   }
 
-  bool _onScreen() => mounted && (ModalRoute.of(context)?.isCurrent ?? true);
+  int _spotsLeft(int index) =>
+      sampleEvents[index].spotsLeft -
+      (_joins[index] == JoinState.joined ? 1 : 0);
 
-  Future<bool> _turnDialTo(Tour tour, Personality personality) async {
-    final dial = _dial.currentContext?.findRenderObject();
-    if (dial is! RenderBox) return false;
-    return tour.tapAt(PersonalityDial.segmentCentre(dial, personality));
+  void _join(int index) {
+    if (_joins[index] case JoinState.joining || JoinState.joined) return;
+    setState(() => _joins[index] = JoinState.joining);
+    _joinTimers[index] = Timer(_joinTakes * timeDilation, () {
+      _joinTimers.remove(index);
+      if (mounted) setState(() => _joins[index] = JoinState.joined);
+    });
   }
-
-  void _caption(String title, String line) => setState(() {
-    _tourCaption = (title: title, line: line);
-    _captionShowing = true;
-  });
-
-  void _captionWord(MotionWord word) => _caption(word.name, word.description);
-
-  Future<void> _playTour() async {
-    if (_touring) return;
-    _touring = true;
-    final tour = Tour(isStillShowing: _onScreen);
-    const beat = Duration(milliseconds: 900);
-    try {
-      _caption('poise', 'Ten words for motion, all inside one app');
-      await tour.pause(const Duration(milliseconds: 1800));
-
-      _captionWord(MotionWord.feedback);
-      await tour.pause(beat);
-      if (!await tour.tap(
-        _firstCard,
-        hold: const Duration(milliseconds: 600),
-      )) {
-        return;
-      }
-      await tour.pause(beat);
-
-      _captionWord(MotionWord.enter);
-      await tour.pause(beat);
-      if (!await tour.tap(_secondHeart)) return;
-      await tour.pause(const Duration(milliseconds: 1400));
-
-      _captionWord(MotionWord.exit);
-      await tour.pause(const Duration(milliseconds: 1500));
-
-      _captionWord(MotionWord.stagger);
-      await tour.pause(const Duration(milliseconds: 500));
-      if (!_onScreen()) return;
-      setState(() => _cascades++);
-      await tour.pause(const Duration(milliseconds: 1600));
-
-      _caption(
-        'Same code, three personalities',
-        'Watch the whole screen change',
-      );
-      await tour.pause(const Duration(milliseconds: 1400));
-      for (final personality in const [
-        Personality.crisp,
-        Personality.playful,
-        Personality.calm,
-      ]) {
-        if (!await _turnDialTo(tour, personality)) return;
-        _caption(personality.label, _feelOf(personality));
-        await tour.pause(const Duration(milliseconds: 1900));
-      }
-    } finally {
-      _touring = false;
-      if (mounted) setState(() => _captionShowing = false);
-    }
-  }
-
-  String _feelOf(Personality personality) => switch (personality) {
-    Personality.calm => 'Settled and quiet',
-    Personality.crisp => 'Quick and exact',
-    Personality.playful => 'Springy and alive',
-  };
 
   void _toggleSaved(int index) {
     final nowSaved = !_saved.contains(index);
@@ -137,7 +93,7 @@ final class _GatherScreenState extends State<GatherScreen> {
       _toastVisible = true;
     });
     _toastTimer?.cancel();
-    _toastTimer = Timer(_toastStays, () {
+    _toastTimer = Timer(_toastStays * timeDilation, () {
       if (mounted) setState(() => _toastVisible = false);
     });
   }
@@ -153,50 +109,60 @@ final class _GatherScreenState extends State<GatherScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 140),
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: _PoiseMark(
-                      onTap: () => Navigator.of(context).pushNamed('/poise'),
-                    ),
+                  Row(
+                    children: [
+                      _PoiseMark(
+                        onTap: () => Navigator.of(context).pushNamed('/poise'),
+                      ),
+                      const Spacer(),
+                      CupertinoButton(
+                        onPressed: _loading ? null : _load,
+                        child: const Icon(
+                          CupertinoIcons.refresh,
+                          semanticLabel: GatherScreen.refreshLabel,
+                          color: GatherColors.secondaryText,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 20),
                   const Text('Gather', style: GatherType.title),
                   const SizedBox(height: 2),
                   const Text('This week near you', style: GatherType.subtitle),
                   const SizedBox(height: 20),
-                  StaggeredColumn(
-                    replayKey: (_personality, _cascades),
-                    children: [
-                      for (final (index, event) in sampleEvents.indexed)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: EventCard(
-                            key: index == 0 ? _firstCard : null,
-                            heartKey: index == 1 ? _secondHeart : null,
-                            event: event,
-                            saved: _saved.contains(index),
-                            onOpen: () {},
-                            onToggleSaved: () => _toggleSaved(index),
+                  if (_loading)
+                    Shimmer(
+                      child: Column(
+                        children: [
+                          for (final _ in sampleEvents)
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 12),
+                              child: EventSkeleton(),
+                            ),
+                        ],
+                      ),
+                    )
+                  else
+                    StaggeredColumn(
+                      replayKey: _personality,
+                      children: [
+                        for (final (index, event) in sampleEvents.indexed)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: EventCard(
+                              event: event,
+                              spotsLeft: _spotsLeft(index),
+                              saved: _saved.contains(index),
+                              onOpen: () => setState(() {
+                                _opened = index;
+                                _sheetOpen = true;
+                              }),
+                              onToggleSaved: () => _toggleSaved(index),
+                            ),
                           ),
-                        ),
-                    ],
-                  ),
+                      ],
+                    ),
                 ],
-              ),
-            ),
-            Positioned(
-              left: 20,
-              right: 20,
-              bottom: 164,
-              child: Center(
-                child: Reveal(
-                  visible: _captionShowing,
-                  revealOnFirstBuild: false,
-                  child: TourCaption(
-                    title: _tourCaption.title,
-                    line: _tourCaption.line,
-                  ),
-                ),
               ),
             ),
             Positioned(
@@ -207,7 +173,7 @@ final class _GatherScreenState extends State<GatherScreen> {
                 child: Reveal(
                   visible: _toastVisible,
                   revealOnFirstBuild: false,
-                  child: _Toast(text: _toastText),
+                  child: GatherToast(text: _toastText),
                 ),
               ),
             ),
@@ -220,7 +186,6 @@ final class _GatherScreenState extends State<GatherScreen> {
                   padding: const EdgeInsets.only(bottom: 16),
                   child: Center(
                     child: PersonalityDial(
-                      key: _dial,
                       selected: _personality,
                       onChanged: (personality) =>
                           setState(() => _personality = personality),
@@ -229,39 +194,30 @@ final class _GatherScreenState extends State<GatherScreen> {
                 ),
               ),
             ),
+            Positioned.fill(
+              child: PoiseSheet(
+                open: _sheetOpen,
+                onClose: () => setState(() => _sheetOpen = false),
+                child: switch (_opened) {
+                  final index? => EventDetails(
+                    event: sampleEvents[index],
+                    joinState: _joins[index] ?? JoinState.open,
+                    spotsLeft: _spotsLeft(index),
+                    onJoin: () => _join(index),
+                    onOpenPage: () => Navigator.of(context).push(
+                      PoiseRoute<void>(
+                        motion: _personality.motion,
+                        builder: (_) => EventPage(event: sampleEvents[index]),
+                      ),
+                    ),
+                  ),
+                  null => const SizedBox.shrink(),
+                },
+              ),
+            ),
           ],
         ),
       ),
-    ),
-  );
-}
-
-final class _Toast extends StatelessWidget {
-  const _Toast({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    decoration: BoxDecoration(
-      color: GatherColors.dial,
-      borderRadius: BorderRadius.circular(24),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Icon(
-          CupertinoIcons.heart_fill,
-          size: 16,
-          color: GatherColors.accent,
-        ),
-        const SizedBox(width: 8),
-        Text(
-          text,
-          style: GatherType.detail.copyWith(color: GatherColors.dialText),
-        ),
-      ],
     ),
   );
 }

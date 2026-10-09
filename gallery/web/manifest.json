@@ -1,11 +1,11 @@
 {
-    "name": "gallery",
-    "short_name": "gallery",
+    "name": "poise gallery",
+    "short_name": "poise",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#EEF1EE",
+    "theme_color": "#1A2230",
+    "description": "Every poise motion word, running in calm, crisp and playful side by side.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

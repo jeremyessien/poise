@@ -1,0 +1,8 @@
+name: poise_sheet
+title: PoiseSheet
+summary: A bottom sheet you can drag and throw, which settles from the speed your finger let go at.
+words: [follow, enter, exit]
+files:
+  - poise_sheet.dart
+needs: []
+since: 0.1.0

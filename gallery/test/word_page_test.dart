@@ -13,7 +13,7 @@ void main() {
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
       MaterialApp(
-        theme: galleryTheme(),
+        theme: galleryTheme,
         home: WordPage(word: word),
       ),
     );

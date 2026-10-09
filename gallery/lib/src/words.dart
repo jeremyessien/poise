@@ -1,3 +1,7 @@
+import 'package:poise/poise.dart';
+
+export 'package:poise/poise.dart' show MotionWord;
+
 enum WordGroup {
   timed('Time-based: starts, runs, stops'),
   driven('Driven: no fixed duration'),
@@ -8,27 +12,37 @@ enum WordGroup {
   final String title;
 }
 
-enum MotionWord {
-  feedback(WordGroup.timed, 'The app felt a touch.'),
-  enter(WordGroup.timed, 'Something arriving.'),
-  exit(WordGroup.timed, 'Something leaving, quicker than it came.'),
-  transition(WordGroup.timed, 'Moving from one screen to another.'),
-  change(WordGroup.timed, 'Something updating where it already is.'),
-  attention(WordGroup.timed, 'Look here, usually because something is wrong.'),
-  celebrate(WordGroup.timed, 'Rewarding the user.'),
-  follow(WordGroup.driven, 'Moves with a finger, then settles.'),
-  loop(WordGroup.driven, 'Repeats until something stops it.'),
-  stagger(WordGroup.rhythm, 'A group arriving one after another.');
+/// What the gallery says about each word, and where it lives.
+extension GalleryWord on MotionWord {
+  WordGroup get group => switch (this) {
+    MotionWord.feedback ||
+    MotionWord.enter ||
+    MotionWord.exit ||
+    MotionWord.transition ||
+    MotionWord.change ||
+    MotionWord.attention ||
+    MotionWord.celebrate => WordGroup.timed,
+    MotionWord.follow || MotionWord.loop => WordGroup.driven,
+    MotionWord.stagger => WordGroup.rhythm,
+  };
 
-  const MotionWord(this.group, this.description);
-
-  final WordGroup group;
-  final String description;
+  String get description => switch (this) {
+    MotionWord.feedback => 'The app felt a touch.',
+    MotionWord.enter => 'Something arriving.',
+    MotionWord.exit => 'Something leaving, quicker than it came.',
+    MotionWord.transition => 'Moving from one screen to another.',
+    MotionWord.change => 'Something updating where it already is.',
+    MotionWord.attention => 'Look here, usually because something is wrong.',
+    MotionWord.celebrate => 'Rewarding the user.',
+    MotionWord.follow => 'Moves with a finger, then settles.',
+    MotionWord.loop => 'Repeats until something stops it.',
+    MotionWord.stagger => 'A group arriving one after another.',
+  };
 
   String get path => '/$name';
 
   static MotionWord? fromPath(String path) {
-    for (final word in values) {
+    for (final word in MotionWord.values) {
       if (word.path == path) return word;
     }
     return null;

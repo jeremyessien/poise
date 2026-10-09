@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:poise_registry/count_up/count_up.dart';
+import 'package:poise_registry/heart_burst/heart_burst.dart';
 import 'package:poise_registry/pressable/pressable.dart';
 
 import 'events.dart';
@@ -11,14 +13,17 @@ final class EventCard extends StatelessWidget {
     required this.saved,
     required this.onOpen,
     required this.onToggleSaved,
-    this.heartKey,
+    this.spotsLeft,
   });
 
   final GatherEvent event;
   final bool saved;
   final VoidCallback onOpen;
   final VoidCallback onToggleSaved;
-  final Key? heartKey;
+
+  /// Spots still open, when it differs from the event's own count because
+  /// someone joined.
+  final int? spotsLeft;
 
   @override
   Widget build(BuildContext context) => Pressable(
@@ -58,7 +63,11 @@ final class EventCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 2),
-                Text('${event.spotsLeft} spots left', style: GatherType.detail),
+                CountUp(
+                  value: spotsLeft ?? event.spotsLeft,
+                  format: spotsLeftLabel,
+                  style: GatherType.detail,
+                ),
               ],
             ),
           ),
@@ -66,17 +75,19 @@ final class EventCard extends StatelessWidget {
             button: true,
             label: saved ? 'Remove from plans' : 'Save to plans',
             child: GestureDetector(
-              key: heartKey,
               behavior: HitTestBehavior.opaque,
               onTap: onToggleSaved,
               child: Padding(
                 padding: const EdgeInsets.all(10),
-                child: Icon(
-                  saved ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
-                  size: 24,
-                  color: saved
-                      ? GatherColors.accent
-                      : GatherColors.secondaryText,
+                child: HeartBurst(
+                  liked: saved,
+                  child: Icon(
+                    saved ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+                    size: 24,
+                    color: saved
+                        ? GatherColors.accent
+                        : GatherColors.secondaryText,
+                  ),
                 ),
               ),
             ),
@@ -101,12 +112,16 @@ final class _DateTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
     ),
     alignment: Alignment.center,
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(event.day, style: GatherType.tileDay),
-        Text(event.date, style: GatherType.tileDate),
-      ],
+    padding: const EdgeInsets.all(4),
+    child: FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(event.day, style: GatherType.tileDay),
+          Text(event.date, style: GatherType.tileDate),
+        ],
+      ),
     ),
   );
 }
