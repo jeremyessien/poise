@@ -39,6 +39,7 @@ final class _SuccessCheckState extends State<SuccessCheck>
   late final AnimationController _progress;
   late PoiseMotion _motion;
   var _settledIn = false;
+  var _leaving = false;
 
   @override
   void initState() {
@@ -69,11 +70,19 @@ final class _SuccessCheckState extends State<SuccessCheck>
     super.dispose();
   }
 
-  void _show() => _progress
-    ..duration = _motion.celebrate.duration
-    ..forward(from: 0);
+  void _show() {
+    _leaving = false;
+    _progress
+      ..duration = _motion.celebrate.duration
+      ..forward(from: 0);
+  }
 
-  void _hide() => _progress.animateBack(0, duration: _motion.exit.duration);
+  /// Leaving only fades. Playing the celebrate curve backwards would still
+  /// overshoot, and exits never bounce.
+  void _hide() {
+    _leaving = true;
+    _progress.animateBack(0, duration: _motion.exit.duration);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +108,9 @@ final class _SuccessCheckState extends State<SuccessCheck>
         child: AnimatedBuilder(
           animation: appear,
           builder: (context, mark) => Transform.scale(
-            scale: pops ? _poppedFrom + (1 - _poppedFrom) * appear.value : 1,
+            scale: pops && !_leaving
+                ? _poppedFrom + (1 - _poppedFrom) * appear.value
+                : 1,
             child: mark,
           ),
           child: FadeTransition(

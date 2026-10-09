@@ -90,4 +90,15 @@ void main() {
     );
     semantics.dispose();
   });
+
+  testWidgets('never grows on the way out', (tester) async {
+    await pumpCheck(tester, shown: true);
+    await tester.pumpAndSettle();
+    await pumpCheck(tester, shown: false);
+    for (var frame = 0; frame < 30; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(scale(tester), lessThanOrEqualTo(1.0001));
+    }
+    await tester.pumpAndSettle();
+  });
 }
