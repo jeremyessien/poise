@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/physics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:poise/poise.dart';
 
@@ -54,6 +55,45 @@ final class PoiseRoute<T> extends PageRoute<T> {
 
   @override
   Duration get transitionDuration => _motion.transition.duration;
+
+  void _swipeStarted() => navigator?.didStartUserGesture();
+
+  /// Puts the screen exactly where the finger is: [shown] is 1 when it fills
+  /// the screen and 0 when it has gone.
+  void _swipeMoved(double shown) => controller?.value = shown;
+
+  /// Hands the screen from the finger to a `follow` spring, carrying on from
+  /// where it is at the finger's [speed], in screens per second towards
+  /// shown. It stays if it was mostly shown or flung back, and leaves if not.
+  Future<void> _swipeReleased(double speed) async {
+    final controller = this.controller;
+    final navigator = this.navigator;
+    if (controller == null || navigator == null) return;
+    final stays = speed.abs() >= _flingSpeed
+        ? speed > 0
+        : controller.value > 0.5;
+    final target = stays ? 1.0 : 0.0;
+    if (!stays) navigator.pop();
+    try {
+      await controller
+          .animateWith(
+            SpringSimulation(
+              _motion.follow.spring,
+              controller.value,
+              target,
+              speed,
+            ),
+          )
+          .orCancel;
+      controller.value = target;
+    } on TickerCanceled {
+      return;
+    } finally {
+      navigator.didStopUserGesture();
+    }
+  }
+
+  static const _flingSpeed = 1.0;
 
   @override
   Duration get reverseTransitionDuration => _motion.exit.duration;
@@ -142,8 +182,23 @@ final class _PoiseTransitionState extends State<_PoiseTransition> {
     );
   }
 
+  ValueListenable<bool>? _gesture;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final gesture = widget.route.navigator?.userGestureInProgressNotifier;
+    if (gesture != _gesture) {
+      _gesture?.removeListener(_gestureChanged);
+      _gesture = gesture?..addListener(_gestureChanged);
+    }
+  }
+
+  void _gestureChanged() => setState(() {});
+
   @override
   void dispose() {
+    _gesture?.removeListener(_gestureChanged);
     _arriving.dispose();
     _covered.dispose();
     super.dispose();
@@ -156,22 +211,26 @@ final class _PoiseTransitionState extends State<_PoiseTransition> {
         ? 1.0
         : -1.0;
 
+    final following = widget.route.navigator?.userGestureInProgress ?? false;
+    final arriving = following ? widget.arriving : _arriving;
+    final covered = following ? widget.covered : _covered;
+
     final page = slides
         ? SlideTransition(
-            position: _covered.drive(
+            position: covered.drive(
               Tween(
                 begin: Offset.zero,
                 end: Offset(-_coveredDrift * towardsEnd, 0),
               ),
             ),
             child: SlideTransition(
-              position: _arriving.drive(
+              position: arriving.drive(
                 Tween(begin: Offset(towardsEnd, 0), end: Offset.zero),
               ),
               child: widget.child,
             ),
           )
-        : FadeTransition(opacity: _arriving, child: widget.child);
+        : FadeTransition(opacity: arriving, child: widget.child);
 
     return switch (defaultTargetPlatform) {
       TargetPlatform.iOS ||
@@ -181,8 +240,8 @@ final class _PoiseTransitionState extends State<_PoiseTransition> {
   }
 }
 
-/// Lets the screen be dragged back from its start edge, driving the route's
-/// own back gesture so the navigator knows a gesture is in progress.
+/// Lets the screen be dragged back from its start edge. The route follows
+/// the finger exactly, and tells the navigator a gesture is in progress.
 final class _EdgeSwipeBack extends StatefulWidget {
   const _EdgeSwipeBack({required this.route, required this.child});
 
@@ -195,7 +254,6 @@ final class _EdgeSwipeBack extends StatefulWidget {
 
 final class _EdgeSwipeBackState extends State<_EdgeSwipeBack> {
   static const _edgeWidth = 20.0;
-  static const _flingSpeed = 1.0;
 
   var _swiping = false;
   var _shown = 1.0;
@@ -209,25 +267,21 @@ final class _EdgeSwipeBackState extends State<_EdgeSwipeBack> {
     if (!widget.route.popGestureEnabled) return;
     _swiping = true;
     _shown = 1;
-    widget.route.handleStartBackGesture(progress: _shown);
+    widget.route._swipeStarted();
   }
 
   void _dragged(DragUpdateDetails details) {
     if (!_swiping) return;
     final moved = (details.primaryDelta ?? 0) * _towardsEnd / _width;
     _shown = (_shown - moved).clamp(0.0, 1.0);
-    widget.route.handleUpdateBackGestureProgress(progress: _shown);
+    widget.route._swipeMoved(_shown);
   }
 
   void _released(DragEndDetails details) {
     if (!_swiping) return;
     _swiping = false;
-    final speed = (details.primaryVelocity ?? 0) * _towardsEnd / _width;
-    if (speed > _flingSpeed || (speed > -_flingSpeed && _shown < 0.5)) {
-      widget.route.handleCommitBackGesture();
-    } else {
-      widget.route.handleCancelBackGesture();
-    }
+    final towardsShown = -(details.primaryVelocity ?? 0) * _towardsEnd / _width;
+    widget.route._swipeReleased(towardsShown);
   }
 
   @override
