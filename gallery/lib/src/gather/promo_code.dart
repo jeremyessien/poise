@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/semantics.dart';
 import 'package:poise_registry/shake/shake.dart';
-import 'package:poise_registry/text_swap/text_swap.dart';
 
 import 'gather_style.dart';
 
@@ -30,14 +30,27 @@ final class _PromoCodeState extends State<PromoCode> {
     super.dispose();
   }
 
-  void _apply() => setState(() {
-    if (_code.text.trim().toUpperCase() == PromoCode.working) {
-      _message = PromoCode.worked;
-    } else {
-      _failures++;
-      _message = PromoCode.didNotWork;
+  /// A failure is announced by the shake, every time. Success has no shake,
+  /// so it's announced here. The message itself stays quiet, or a screen
+  /// reader would hear each failure twice.
+  void _apply() {
+    final worked = _code.text.trim().toUpperCase() == PromoCode.working;
+    setState(() {
+      if (worked) {
+        _message = PromoCode.worked;
+      } else {
+        _failures++;
+        _message = PromoCode.didNotWork;
+      }
+    });
+    if (worked) {
+      SemanticsService.sendAnnouncement(
+        View.of(context),
+        PromoCode.worked,
+        Directionality.of(context),
+      );
     }
-  });
+  }
 
   @override
   Widget build(BuildContext context) => Column(
@@ -80,7 +93,7 @@ final class _PromoCodeState extends State<PromoCode> {
       if (_message.isNotEmpty)
         Padding(
           padding: const EdgeInsets.only(top: 6, left: 4),
-          child: TextSwap(_message, style: GatherType.detail),
+          child: Text(_message, style: GatherType.detail),
         ),
     ],
   );

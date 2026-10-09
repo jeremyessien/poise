@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gallery/src/gather/event_card.dart';
 import 'package:gallery/src/gather/event_details.dart';
@@ -257,5 +258,52 @@ void main() {
     expect(find.byType(Shimmer), findsOneWidget);
     await tester.pumpAndSettle();
     expect(find.byType(Shimmer), findsNothing);
+  });
+
+  testWidgets('each promo code attempt is announced exactly once', (
+    tester,
+  ) async {
+    final heard = <String>[];
+    tester.binding.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(
+      SystemChannels.accessibility,
+      (message) async {
+        if (message case {
+          'type': 'announce',
+          'data': {'message': final String text},
+        }) {
+          heard.add(text);
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger
+          .setMockDecodedMessageHandler<Object?>(
+            SystemChannels.accessibility,
+            null,
+          ),
+    );
+    final semantics = tester.ensureSemantics();
+    await pumpGather(tester);
+    await tester.tap(find.byType(EventCard).first);
+    await tester.pumpAndSettle();
+
+    for (var attempt = 0; attempt < 2; attempt++) {
+      await tester.enterText(find.byType(CupertinoTextField), 'nope');
+      await tester.tap(find.text(PromoCode.apply));
+      await tester.pumpAndSettle();
+    }
+    expect(heard, [PromoCode.didNotWork, PromoCode.didNotWork]);
+    expect(
+      tester.getSemantics(find.text(PromoCode.didNotWork)),
+      isNot(matchesSemantics(isLiveRegion: true)),
+    );
+
+    await tester.enterText(find.byType(CupertinoTextField), 'gather');
+    await tester.tap(find.text(PromoCode.apply));
+    await tester.pumpAndSettle();
+    expect(heard.last, PromoCode.worked);
+    expect(heard, hasLength(3));
+    semantics.dispose();
   });
 }
