@@ -25,6 +25,16 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  Future<void> tapRow(WidgetTester tester, String title) async {
+    await tester.scrollUntilVisible(
+      find.text(title),
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(title));
+  }
+
   testWidgets('the poise mark opens the menu with every recipe', (
     tester,
   ) async {
@@ -51,7 +61,7 @@ void main() {
   testWidgets('the words row opens the list of words', (tester) async {
     final semantics = tester.ensureSemantics();
     await openMenu(tester);
-    await tester.tap(find.text('Every word poise uses'));
+    await tapRow(tester, 'Every word poise uses');
     await tester.pumpAndSettle();
     expect(find.byType(WordsPage), findsOneWidget);
     semantics.dispose();
@@ -60,15 +70,15 @@ void main() {
   testWidgets('tapping a switch row changes its setting', (tester) async {
     final semantics = tester.ensureSemantics();
     await openMenu(tester);
-    await tester.tap(find.text('Reduce motion'));
+    await tapRow(tester, 'Reduce motion');
     await tester.pumpAndSettle();
     expect(settings.reduceMotion, isTrue);
 
-    await tester.tap(find.text('Show touches'));
+    await tapRow(tester, 'Show touches');
     await tester.pumpAndSettle();
     expect(settings.showTouches, isTrue);
 
-    await tester.tap(find.text('Slow motion'));
+    await tapRow(tester, 'Slow motion');
     await tester.pump();
     expect(settings.slowMotion, isTrue);
     settings.slowMotion = false;
@@ -79,13 +89,7 @@ void main() {
     final semantics = tester.ensureSemantics();
     await openMenu(tester);
     final tour = GalleryTourScope.of(tester.element(find.byType(MenuPage)));
-    await tester.scrollUntilVisible(
-      find.text('Play the tour'),
-      200,
-      scrollable: find.byType(Scrollable).last,
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Play the tour'));
+    await tapRow(tester, 'Play the tour');
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
