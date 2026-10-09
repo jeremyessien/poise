@@ -109,26 +109,31 @@ void main() {
   ) async {
     final semantics = tester.ensureSemantics();
     settings.slowMotion = true;
-    await pumpGather(tester);
-    await tester.tap(find.bySemanticsLabel('Save to plans').first);
-    await tester.pump();
+    // Flutter checks timeDilation is back to normal before any teardown runs,
+    // so the reset has to happen in the test itself, even when it fails.
+    try {
+      await pumpGather(tester);
+      await tester.tap(find.bySemanticsLabel('Save to plans').first);
+      await tester.pump();
 
-    Reveal toast() => tester.widget<Reveal>(
-      find
-          .ancestor(
-            of: find.text('Saved to your plans'),
-            matching: find.byType(Reveal),
-          )
-          .first,
-    );
-    await tester.pump(const Duration(seconds: 2));
-    expect(toast().visible, isTrue);
+      Reveal toast() => tester.widget<Reveal>(
+        find
+            .ancestor(
+              of: find.text('Saved to your plans'),
+              matching: find.byType(Reveal),
+            )
+            .first,
+      );
+      await tester.pump(const Duration(seconds: 2));
+      expect(toast().visible, isTrue);
 
-    await tester.pump(const Duration(seconds: 8));
-    expect(toast().visible, isFalse);
-    await tester.pumpAndSettle();
-    settings.slowMotion = false;
-    semantics.dispose();
+      await tester.pump(const Duration(seconds: 8));
+      expect(toast().visible, isFalse);
+      await tester.pumpAndSettle();
+    } finally {
+      settings.slowMotion = false;
+      semantics.dispose();
+    }
   });
 
   testWidgets('show touches draws a circle under a finger', (tester) async {
