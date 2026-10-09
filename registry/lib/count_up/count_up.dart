@@ -31,12 +31,15 @@ final class CountUp extends StatefulWidget {
 
 final class _CountUpState extends State<CountUp>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _progress = AnimationController(
-    vsync: this,
-    value: 1,
-  );
+  late final AnimationController _progress;
   late num _from = widget.value;
   late Feel _feel;
+
+  @override
+  void initState() {
+    super.initState();
+    _progress = AnimationController(vsync: this, value: 1);
+  }
 
   @override
   void didChangeDependencies() {

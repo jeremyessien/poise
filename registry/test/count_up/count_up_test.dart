@@ -79,4 +79,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('100'), findsOneWidget);
   });
+
+  testWidgets('can be removed after only ever being reduced', (tester) async {
+    await pumpCount(tester, 3, disableAnimations: true);
+    await tester.pumpWidget(const SizedBox());
+    expect(tester.takeException(), isNull);
+  });
 }
