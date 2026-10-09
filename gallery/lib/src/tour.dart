@@ -383,8 +383,12 @@ final class GalleryTour extends ChangeNotifier {
 
   /// The page's own list, which is the first scrollable on it.
   ScrollPosition _scrollPosition() {
-    final scrollable = _element((widget) => widget is Scrollable, 0);
-    return ((scrollable as StatefulElement).state as ScrollableState).position;
+    if (_element((widget) => widget is Scrollable, 0) case StatefulElement(
+      state: ScrollableState(:final position),
+    )) {
+      return position;
+    }
+    throw const _TourStopped();
   }
 
   RenderBox _find<T extends Widget>() => _box((widget) => widget is T, 0);
