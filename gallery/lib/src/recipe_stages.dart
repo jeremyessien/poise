@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:poise_registry/poise_sheet/poise_sheet.dart';
-import 'package:poise_registry/pressable/pressable.dart';
 import 'package:poise_registry/reveal/reveal.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
 
 import 'gather/event_card.dart';
 import 'gather/event_details.dart';
 import 'gather/events.dart';
+import 'gather/gather_button.dart';
 import 'gather/gather_style.dart';
 import 'gather/gather_toast.dart';
 import 'recipes.dart';
@@ -52,7 +52,7 @@ final class _PressableStage extends StatelessWidget {
         onToggleSaved: () {},
       ),
       const SizedBox(height: 24),
-      StageButton(label: 'Join event', onTap: () {}),
+      GatherButton(label: const Text('Join event'), onTap: () {}),
       const SizedBox(height: 16),
       const Text('Press and hold either one', style: GatherType.detail),
     ],
@@ -82,8 +82,8 @@ final class _RevealStageState extends State<_RevealStage> {
           ),
         ),
       ),
-      StageButton(
-        label: _shown ? 'Hide' : 'Show',
+      GatherButton(
+        label: Text(_shown ? 'Hide' : 'Show'),
         onTap: () => setState(() => _shown = !_shown),
       ),
       const SizedBox(height: 12),
@@ -121,8 +121,8 @@ final class _SheetStageState extends State<_SheetStage> {
                 onToggleSaved: () {},
               ),
               const SizedBox(height: 20),
-              StageButton(
-                label: 'Open details',
+              GatherButton(
+                label: const Text('Open details'),
                 onTap: () => setState(() => _open = true),
               ),
               const SizedBox(height: 12),
@@ -172,7 +172,10 @@ final class _StaggerStageState extends State<_StaggerStage> {
         ],
       ),
       const SizedBox(height: 16),
-      StageButton(label: 'Replay', onTap: () => setState(() => _replays++)),
+      GatherButton(
+        label: const Text('Replay'),
+        onTap: () => setState(() => _replays++),
+      ),
     ],
   );
 }
@@ -201,30 +204,6 @@ final class _EventRow extends StatelessWidget {
         Expanded(child: Text(event.title, style: GatherType.eventTitle)),
         Text('${event.day} ${event.date}', style: GatherType.detail),
       ],
-    ),
-  );
-}
-
-final class StageButton extends StatelessWidget {
-  const StageButton({super.key, required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => Pressable(
-    onTap: onTap,
-    child: Container(
-      height: 50,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: GatherColors.accent,
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: Text(
-        label,
-        style: GatherType.eventTitle.copyWith(color: GatherColors.card),
-      ),
     ),
   );
 }
