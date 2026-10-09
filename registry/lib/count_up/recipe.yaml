@@ -1,0 +1,8 @@
+name: count_up
+title: CountUp
+summary: A number that counts to its new value, so a balance or a score visibly climbs instead of jumping.
+words: [change]
+files:
+  - count_up.dart
+needs: [text_swap]
+since: 0.1.0
