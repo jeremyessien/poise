@@ -41,6 +41,9 @@ final class _HeartBurstState extends State<HeartBurst>
   late final AnimationController _press;
   late PoiseMotion _motion;
 
+  /// Counts presses, so a cancelled press doesn't release the one after it.
+  var _presses = 0;
+
   @override
   void initState() {
     super.initState();
@@ -63,10 +66,11 @@ final class _HeartBurstState extends State<HeartBurst>
         ..duration = _motion.celebrate.duration
         ..forward(from: 0);
     } else {
+      final press = ++_presses;
       _press
         ..duration = _motion.feedback.duration
         ..forward(from: 0).whenCompleteOrCancel(() {
-          if (mounted) _press.reverse();
+          if (mounted && press == _presses) _press.reverse();
         });
     }
   }

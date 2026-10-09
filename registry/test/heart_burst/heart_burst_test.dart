@@ -8,13 +8,14 @@ void main() {
     WidgetTester tester, {
     required bool liked,
     bool disableAnimations = false,
+    PoiseMotion motion = PoiseMotion.playful,
   }) => tester.pumpWidget(
     MediaQuery(
       data: MediaQueryData(disableAnimations: disableAnimations),
       child: Directionality(
         textDirection: TextDirection.ltr,
         child: PoiseScope(
-          motion: PoiseMotion.playful,
+          motion: motion,
           child: Center(
             child: HeartBurst(
               liked: liked,
@@ -72,5 +73,27 @@ void main() {
     await pumpHeart(tester, liked: true, disableAnimations: true);
     expect(tester.hasRunningAnimations, isFalse);
     expect(scale(tester), 1);
+  });
+
+  testWidgets('a quick second unlike still presses all the way', (
+    tester,
+  ) async {
+    final instantPop = PoiseMotion.playful.copyWith(
+      celebrate: const Fade(duration: Duration(milliseconds: 1)),
+    );
+    Future<void> pump(bool liked) =>
+        pumpHeart(tester, liked: liked, motion: instantPop);
+
+    await pump(true);
+    await tester.pumpAndSettle();
+    await pump(false);
+    await tester.pump(const Duration(milliseconds: 16));
+    await pump(true);
+    await tester.pump(const Duration(milliseconds: 16));
+    await pump(false);
+
+    expect(await smallestScaleWhile(tester), lessThan(0.9));
+    await tester.pumpAndSettle();
+    expect(scale(tester), closeTo(1, 0.001));
   });
 }
