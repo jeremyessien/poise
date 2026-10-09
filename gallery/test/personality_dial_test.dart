@@ -44,4 +44,27 @@ void main() {
 
     expect(end.dx, greaterThan(start.dx));
   });
+
+  testWidgets('the highlight sits under the chosen label right to left', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Center(
+            child: PersonalityDial(
+              selected: Personality.calm,
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+    final highlight = tester.getCenter(
+      find.byKey(const ValueKey('dial-highlight')),
+    );
+    final label = tester.getCenter(find.text(Personality.calm.label));
+    expect(highlight.dx, closeTo(label.dx, 20));
+  });
 }

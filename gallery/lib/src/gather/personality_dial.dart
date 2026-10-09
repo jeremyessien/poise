@@ -68,8 +68,8 @@ final class _PersonalityDialState extends State<PersonalityDial>
         children: [
           AnimatedBuilder(
             animation: _position,
-            builder: (context, indicator) => Positioned(
-              left: _position.value * _segmentWidth,
+            builder: (context, indicator) => PositionedDirectional(
+              start: _position.value * _segmentWidth,
               top: 0,
               bottom: 0,
               width: _segmentWidth,
