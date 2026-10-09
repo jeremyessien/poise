@@ -42,7 +42,7 @@ final class _GatherScreenState extends State<GatherScreen> {
   Timer? _loadingTimer;
   int? _opened;
   final _joins = <int, JoinState>{};
-  final _joinTimers = <Timer>[];
+  final _joinTimers = <int, Timer>{};
   var _sheetOpen = false;
   var _toastVisible = false;
   var _toastText = '';
@@ -65,7 +65,7 @@ final class _GatherScreenState extends State<GatherScreen> {
   @override
   void dispose() {
     _loadingTimer?.cancel();
-    for (final timer in _joinTimers) {
+    for (final timer in _joinTimers.values) {
       timer.cancel();
     }
     _toastTimer?.cancel();
@@ -79,11 +79,10 @@ final class _GatherScreenState extends State<GatherScreen> {
   void _join(int index) {
     if (_joins[index] case JoinState.joining || JoinState.joined) return;
     setState(() => _joins[index] = JoinState.joining);
-    _joinTimers.add(
-      Timer(_joinTakes * timeDilation, () {
-        if (mounted) setState(() => _joins[index] = JoinState.joined);
-      }),
-    );
+    _joinTimers[index] = Timer(_joinTakes * timeDilation, () {
+      _joinTimers.remove(index);
+      if (mounted) setState(() => _joins[index] = JoinState.joined);
+    });
   }
 
   void _toggleSaved(int index) {
