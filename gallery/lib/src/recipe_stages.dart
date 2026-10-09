@@ -5,6 +5,7 @@ import 'package:poise_registry/heart_burst/heart_burst.dart';
 import 'package:poise_registry/poise_route/poise_route.dart';
 import 'package:poise_registry/poise_sheet/poise_sheet.dart';
 import 'package:poise_registry/reveal/reveal.dart';
+import 'package:poise_registry/shimmer/shimmer.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
 import 'package:poise_registry/success_check/success_check.dart';
 import 'package:poise_registry/text_swap/text_swap.dart';
@@ -12,6 +13,7 @@ import 'package:poise_registry/text_swap/text_swap.dart';
 import 'gather/event_card.dart';
 import 'gather/event_details.dart';
 import 'gather/event_page.dart';
+import 'gather/event_skeleton.dart';
 import 'gather/events.dart';
 import 'gather/gather_button.dart';
 import 'gather/gather_style.dart';
@@ -45,6 +47,7 @@ final class RecipeStage extends StatelessWidget {
         GalleryRecipe.shake => const _ShakeStage(),
         GalleryRecipe.heartBurst => const _HeartBurstStage(),
         GalleryRecipe.poiseRoute => const _RouteStage(),
+        GalleryRecipe.shimmer => const _ShimmerStage(),
         GalleryRecipe.staggeredColumn => _StaggerStage(replayKey: replayKey),
       },
     ),
@@ -198,6 +201,33 @@ final class _SuccessCheckStageState extends State<_SuccessCheckStage> {
         onTap: () => setState(() => _paid = !_paid),
       ),
       const SizedBox(height: 16),
+    ],
+  );
+}
+
+final class _ShimmerStage extends StatelessWidget {
+  const _ShimmerStage();
+
+  @override
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Shimmer(
+        child: Column(
+          children: [
+            for (var row = 0; row < 3; row++)
+              const Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: EventSkeleton(),
+              ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 8),
+      const Text(
+        'Turn the dial: calm and crisp breathe, playful sweeps',
+        style: GatherType.detail,
+      ),
     ],
   );
 }

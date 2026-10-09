@@ -35,7 +35,10 @@ void main() {
         home: RecipePage(recipe: recipe),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    // Shimmer loops for as long as it's on screen, so this can't wait for
+    // everything to settle. Two seconds covers every recipe's entrance.
+    await tester.pump(const Duration(seconds: 2));
   }
 
   test('every recipe mirrors its manifest in the registry', () {

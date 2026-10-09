@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 
 import 'gather/event_card.dart';
 import 'gather/event_details.dart';
+import 'gather/gather_screen.dart';
 import 'gather/promo_code.dart';
 import 'recipes.dart';
 import 'settings.dart';
@@ -95,6 +96,13 @@ final class GalleryTour extends ChangeNotifier {
     navigator.currentState?.popUntil((route) => route.isFirst);
     _say('poise', 'Ten words for motion, all inside one app');
     await _pause(const Duration(milliseconds: 1800));
+
+    _sayWord(MotionWord.loop);
+    await _pause(_beat);
+    await _tap(_findLabel(GatherScreen.refreshLabel));
+    await _pause(const Duration(milliseconds: 1300));
+    _say('stagger', 'Then the events arrive one after another');
+    await _pause(const Duration(milliseconds: 1400));
 
     _sayWord(MotionWord.feedback);
     await _pause(_beat);

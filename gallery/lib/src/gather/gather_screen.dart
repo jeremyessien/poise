@@ -1,17 +1,20 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:poise/poise.dart';
 import 'package:poise_registry/poise_route/poise_route.dart';
 import 'package:poise_registry/poise_sheet/poise_sheet.dart';
 import 'package:poise_registry/reveal/reveal.dart';
+import 'package:poise_registry/shimmer/shimmer.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
 
 import '../theme.dart';
 import 'event_card.dart';
 import 'event_details.dart';
 import 'event_page.dart';
+import 'event_skeleton.dart';
 import 'events.dart';
 import 'gather_style.dart';
 import 'gather_toast.dart';
@@ -20,6 +23,10 @@ import 'personality_dial.dart';
 final class GatherScreen extends StatefulWidget {
   const GatherScreen({super.key});
 
+  /// What a screen reader announces for the refresh button, and what the
+  /// tour presses.
+  static const refreshLabel = 'Refresh events';
+
   @override
   State<GatherScreen> createState() => _GatherScreenState();
 }
@@ -27,9 +34,12 @@ final class GatherScreen extends StatefulWidget {
 final class _GatherScreenState extends State<GatherScreen> {
   static const _toastStays = Duration(milliseconds: 1800);
   static const _joinTakes = Duration(milliseconds: 900);
+  static const _loadingTakes = Duration(milliseconds: 1200);
 
   var _personality = Personality.calm;
   final _saved = <int>{};
+  var _loading = true;
+  Timer? _loadingTimer;
   int? _opened;
   final _joins = <int, JoinState>{};
   final _joinTimers = <Timer>[];
@@ -39,7 +49,22 @@ final class _GatherScreenState extends State<GatherScreen> {
   Timer? _toastTimer;
 
   @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  void _load() {
+    setState(() => _loading = true);
+    _loadingTimer?.cancel();
+    _loadingTimer = Timer(_loadingTakes * timeDilation, () {
+      if (mounted) setState(() => _loading = false);
+    });
+  }
+
+  @override
   void dispose() {
+    _loadingTimer?.cancel();
     for (final timer in _joinTimers) {
       timer.cancel();
     }
@@ -85,36 +110,59 @@ final class _GatherScreenState extends State<GatherScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 140),
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: _PoiseMark(
-                      onTap: () => Navigator.of(context).pushNamed('/poise'),
-                    ),
+                  Row(
+                    children: [
+                      _PoiseMark(
+                        onTap: () => Navigator.of(context).pushNamed('/poise'),
+                      ),
+                      const Spacer(),
+                      CupertinoButton(
+                        onPressed: _loading ? null : _load,
+                        child: const Icon(
+                          CupertinoIcons.refresh,
+                          semanticLabel: GatherScreen.refreshLabel,
+                          color: GatherColors.secondaryText,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 20),
                   const Text('Gather', style: GatherType.title),
                   const SizedBox(height: 2),
                   const Text('This week near you', style: GatherType.subtitle),
                   const SizedBox(height: 20),
-                  StaggeredColumn(
-                    replayKey: _personality,
-                    children: [
-                      for (final (index, event) in sampleEvents.indexed)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: EventCard(
-                            event: event,
-                            spotsLeft: _spotsLeft(index),
-                            saved: _saved.contains(index),
-                            onOpen: () => setState(() {
-                              _opened = index;
-                              _sheetOpen = true;
-                            }),
-                            onToggleSaved: () => _toggleSaved(index),
+                  if (_loading)
+                    Shimmer(
+                      child: Column(
+                        children: [
+                          for (final _ in sampleEvents)
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 12),
+                              child: EventSkeleton(),
+                            ),
+                        ],
+                      ),
+                    )
+                  else
+                    StaggeredColumn(
+                      replayKey: _personality,
+                      children: [
+                        for (final (index, event) in sampleEvents.indexed)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: EventCard(
+                              event: event,
+                              spotsLeft: _spotsLeft(index),
+                              saved: _saved.contains(index),
+                              onOpen: () => setState(() {
+                                _opened = index;
+                                _sheetOpen = true;
+                              }),
+                              onToggleSaved: () => _toggleSaved(index),
+                            ),
                           ),
-                        ),
-                    ],
-                  ),
+                      ],
+                    ),
                 ],
               ),
             ),

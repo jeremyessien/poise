@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gallery/src/gather/event_card.dart';
 import 'package:gallery/src/gather/event_details.dart';
 import 'package:gallery/src/gather/event_page.dart';
+import 'package:gallery/src/gather/event_skeleton.dart';
 import 'package:gallery/src/gather/promo_code.dart';
 import 'package:gallery/src/gather/events.dart';
 import 'package:gallery/src/gather/gather_screen.dart';
@@ -12,6 +13,7 @@ import 'package:gallery/src/touches.dart';
 import 'package:poise/poise.dart';
 import 'package:poise_registry/heart_burst/heart_burst.dart';
 import 'package:poise_registry/reveal/reveal.dart';
+import 'package:poise_registry/shimmer/shimmer.dart';
 import 'package:poise_registry/success_check/success_check.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
 
@@ -226,5 +228,34 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(EventPage), findsNothing);
     expect(find.text(EventDetails.heading), findsOneWidget);
+  });
+
+  testWidgets('shimmers placeholders while events load, again on refresh', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1206, 3600);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        builder: (context, child) => GallerySettingsScope(
+          settings: settings,
+          child: child ?? const SizedBox.shrink(),
+        ),
+        home: const GatherScreen(),
+      ),
+    );
+    expect(find.byType(EventSkeleton), findsNWidgets(sampleEvents.length));
+    expect(find.byType(EventCard), findsNothing);
+
+    await tester.pumpAndSettle();
+    expect(find.byType(EventSkeleton), findsNothing);
+    expect(find.byType(EventCard), findsNWidgets(sampleEvents.length));
+
+    await tester.tap(find.byIcon(CupertinoIcons.refresh));
+    await tester.pump();
+    expect(find.byType(Shimmer), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(find.byType(Shimmer), findsNothing);
   });
 }

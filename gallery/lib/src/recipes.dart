@@ -106,6 +106,16 @@ Navigator.of(context).push(
   PoiseRoute(builder: (context) => EventPage(event: event)),
 )''',
   ),
+  shimmer(
+    'Shimmer',
+    'Loading placeholders that breathe or shimmer in your personality, and '
+        'hold still when motion is reduced.',
+    [MotionWord.loop],
+    '''
+loading
+    ? const Shimmer(child: EventCardSkeleton())
+    : EventCard(event: event)''',
+  ),
   staggeredColumn(
     'StaggeredColumn',
     'A column whose children arrive one after another, spaced by the '
