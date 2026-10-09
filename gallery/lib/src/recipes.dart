@@ -62,6 +62,17 @@ CountUp(
   format: (n) => '\$n spots left',
 )''',
   ),
+  successCheck(
+    'SuccessCheck',
+    'A tick that draws itself inside a circle that pops in, for the moment '
+        'something has worked.',
+    [MotionWord.celebrate, MotionWord.exit],
+    '''
+SuccessCheck(
+  shown: paymentWentThrough,
+  semanticLabel: 'Payment sent',
+)''',
+  ),
   staggeredColumn(
     'StaggeredColumn',
     'A column whose children arrive one after another, spaced by the '

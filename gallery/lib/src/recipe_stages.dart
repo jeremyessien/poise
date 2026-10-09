@@ -3,6 +3,7 @@ import 'package:poise_registry/count_up/count_up.dart';
 import 'package:poise_registry/poise_sheet/poise_sheet.dart';
 import 'package:poise_registry/reveal/reveal.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
+import 'package:poise_registry/success_check/success_check.dart';
 import 'package:poise_registry/text_swap/text_swap.dart';
 
 import 'gather/event_card.dart';
@@ -35,6 +36,7 @@ final class RecipeStage extends StatelessWidget {
         GalleryRecipe.poiseSheet => const _SheetStage(),
         GalleryRecipe.textSwap => const _TextSwapStage(),
         GalleryRecipe.countUp => const _CountUpStage(),
+        GalleryRecipe.successCheck => const _SuccessCheckStage(),
         GalleryRecipe.staggeredColumn => _StaggerStage(replayKey: replayKey),
       },
     ),
@@ -155,6 +157,37 @@ final class _CountUpStageState extends State<_CountUpStage> {
         label: Text(_spots < _group ? 'Open more spots' : 'A group joins'),
         onTap: () =>
             setState(() => _spots = _spots < _group ? _full : _spots - _group),
+      ),
+      const SizedBox(height: 16),
+    ],
+  );
+}
+
+final class _SuccessCheckStage extends StatefulWidget {
+  const _SuccessCheckStage();
+
+  @override
+  State<_SuccessCheckStage> createState() => _SuccessCheckStageState();
+}
+
+final class _SuccessCheckStageState extends State<_SuccessCheckStage> {
+  var _paid = false;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      const SizedBox(height: 40),
+      SuccessCheck(shown: _paid, size: 96, semanticLabel: 'Payment sent'),
+      const SizedBox(height: 16),
+      TextSwap(
+        _paid ? 'Payment sent' : 'Ready to pay',
+        style: GatherType.eventTitle,
+      ),
+      const SizedBox(height: 32),
+      GatherButton(
+        label: Text(_paid ? 'Start again' : r'Pay $40'),
+        onTap: () => setState(() => _paid = !_paid),
       ),
       const SizedBox(height: 16),
     ],

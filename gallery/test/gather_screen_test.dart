@@ -8,6 +8,7 @@ import 'package:gallery/src/settings.dart';
 import 'package:gallery/src/touches.dart';
 import 'package:poise/poise.dart';
 import 'package:poise_registry/reveal/reveal.dart';
+import 'package:poise_registry/success_check/success_check.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
 
 void main() {
@@ -180,5 +181,6 @@ void main() {
     final spots = sampleEvents.first.spotsLeft;
     expect(find.text(spotsLeftLabel(spots - 1)), findsNWidgets(2));
     expect(find.text(spotsLeftLabel(spots)), findsNothing);
+    expect(find.byType(SuccessCheck), findsOneWidget);
   });
 }

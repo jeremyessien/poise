@@ -79,8 +79,15 @@ void main() {
     final semantics = tester.ensureSemantics();
     await openMenu(tester);
     final tour = GalleryTourScope.of(tester.element(find.byType(MenuPage)));
-    await tester.tap(find.text('Play the tour'));
+    await tester.scrollUntilVisible(
+      find.text('Play the tour'),
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
     await tester.pumpAndSettle();
+    await tester.tap(find.text('Play the tour'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
 
     expect(tour.isRunning, isTrue);
     expect(find.byType(MenuPage), findsNothing);

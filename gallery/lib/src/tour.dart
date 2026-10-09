@@ -121,9 +121,11 @@ final class GalleryTour extends ChangeNotifier {
     _sayWord(MotionWord.change);
     await _pause(_beat);
     await _tap(_findText(JoinState.open.label));
-    await _pause(const Duration(milliseconds: 1400));
+    await _pause(const Duration(milliseconds: 800));
+    _sayWord(MotionWord.celebrate);
+    await _pause(const Duration(milliseconds: 1600));
     _say('change', 'Spots left count down as you join');
-    await _pause(const Duration(milliseconds: 1800));
+    await _pause(const Duration(milliseconds: 1600));
     await _drag(
       _findText(EventDetails.heading),
       by: const Offset(0, 320),
@@ -179,6 +181,7 @@ final class GalleryTour extends ChangeNotifier {
     await _pause(const Duration(milliseconds: 1600));
     await _back();
 
+    await _bringIntoView('Every word poise uses');
     await _tap(_findText('Every word poise uses'));
     await _pause(_beat);
     _say('The ten words', 'Apps, recipes and agents all use the same words');

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:poise/poise.dart';
 
 import 'package:poise_registry/count_up/count_up.dart';
+import 'package:poise_registry/success_check/success_check.dart';
 import 'package:poise_registry/text_swap/text_swap.dart';
 
 import 'events.dart';
@@ -63,7 +65,29 @@ final class EventDetails extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        GatherButton(label: TextSwap(joinState.label), onTap: onJoin),
+        GatherButton(
+          label: AnimatedSize(
+            duration: context.motion.change.duration,
+            curve: context.motion.change.curve,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (joinState == JoinState.joined) ...[
+                  const SuccessCheck(
+                    shown: true,
+                    size: 22,
+                    color: GatherColors.card,
+                    tickColor: GatherColors.accent,
+                    semanticLabel: 'Joined',
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                TextSwap(joinState.label),
+              ],
+            ),
+          ),
+          onTap: onJoin,
+        ),
       ],
     ),
   );
