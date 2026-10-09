@@ -73,6 +73,18 @@ SuccessCheck(
   semanticLabel: 'Payment sent',
 )''',
   ),
+  shake(
+    'Shake',
+    'The "no" wobble for a wrong password or a code that didn\'t work, which '
+        'flashes instead when motion is reduced.',
+    [MotionWord.attention],
+    '''
+Shake(
+  trigger: failedAttempts,
+  announcement: "That code didn't work",
+  child: PromoCodeField(controller: code),
+)''',
+  ),
   staggeredColumn(
     'StaggeredColumn',
     'A column whose children arrive one after another, spaced by the '

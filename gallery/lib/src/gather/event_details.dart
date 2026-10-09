@@ -8,6 +8,7 @@ import 'package:poise_registry/text_swap/text_swap.dart';
 import 'events.dart';
 import 'gather_button.dart';
 import 'gather_style.dart';
+import 'promo_code.dart';
 
 /// Where someone is in joining an event.
 enum JoinState {
@@ -64,7 +65,9 @@ final class EventDetails extends StatelessWidget {
             format: spotsLeftLabel,
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
+        const PromoCode(),
+        const SizedBox(height: 16),
         GatherButton(
           label: AnimatedSize(
             duration: context.motion.change.duration,

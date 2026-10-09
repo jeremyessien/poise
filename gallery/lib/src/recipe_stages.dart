@@ -12,6 +12,7 @@ import 'gather/events.dart';
 import 'gather/gather_button.dart';
 import 'gather/gather_style.dart';
 import 'gather/gather_toast.dart';
+import 'gather/promo_code.dart';
 import 'recipes.dart';
 
 final class RecipeStage extends StatelessWidget {
@@ -37,6 +38,7 @@ final class RecipeStage extends StatelessWidget {
         GalleryRecipe.textSwap => const _TextSwapStage(),
         GalleryRecipe.countUp => const _CountUpStage(),
         GalleryRecipe.successCheck => const _SuccessCheckStage(),
+        GalleryRecipe.shake => const _ShakeStage(),
         GalleryRecipe.staggeredColumn => _StaggerStage(replayKey: replayKey),
       },
     ),
@@ -190,6 +192,25 @@ final class _SuccessCheckStageState extends State<_SuccessCheckStage> {
         onTap: () => setState(() => _paid = !_paid),
       ),
       const SizedBox(height: 16),
+    ],
+  );
+}
+
+final class _ShakeStage extends StatelessWidget {
+  const _ShakeStage();
+
+  @override
+  Widget build(BuildContext context) => const Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      SizedBox(height: 96),
+      PromoCode(),
+      SizedBox(height: 16),
+      Text(
+        'Try any code. Only ${PromoCode.working} works.',
+        style: GatherType.detail,
+      ),
+      SizedBox(height: 96),
     ],
   );
 }

@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gallery/src/gather/event_card.dart';
 import 'package:gallery/src/gather/event_details.dart';
+import 'package:gallery/src/gather/promo_code.dart';
 import 'package:gallery/src/gather/events.dart';
 import 'package:gallery/src/gather/gather_screen.dart';
 import 'package:gallery/src/settings.dart';
@@ -182,5 +184,26 @@ void main() {
     expect(find.text(spotsLeftLabel(spots - 1)), findsNWidgets(2));
     expect(find.text(spotsLeftLabel(spots)), findsNothing);
     expect(find.byType(SuccessCheck), findsOneWidget);
+  });
+
+  testWidgets('a wrong promo code shakes, the right one applies', (
+    tester,
+  ) async {
+    await pumpGather(tester);
+    await tester.tap(find.byType(EventCard).first);
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(CupertinoTextField), 'nope');
+    await tester.tap(find.text(PromoCode.apply));
+    await tester.pump();
+    expect(find.text(PromoCode.didNotWork), findsOneWidget);
+    expect(tester.hasRunningAnimations, isTrue);
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(CupertinoTextField), 'gather');
+    await tester.tap(find.text(PromoCode.apply));
+    await tester.pumpAndSettle();
+    expect(find.text(PromoCode.worked), findsOneWidget);
+    expect(find.text(PromoCode.didNotWork), findsNothing);
   });
 }

@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 
 import 'gather/event_card.dart';
 import 'gather/event_details.dart';
+import 'gather/promo_code.dart';
 import 'recipes.dart';
 import 'settings.dart';
 import 'theme.dart';
@@ -126,6 +127,10 @@ final class GalleryTour extends ChangeNotifier {
     await _pause(const Duration(milliseconds: 1600));
     _say('change', 'Spots left count down as you join');
     await _pause(const Duration(milliseconds: 1600));
+    _sayWord(MotionWord.attention);
+    await _pause(_beat);
+    await _tap(_findText(PromoCode.apply));
+    await _pause(const Duration(milliseconds: 1400));
     await _drag(
       _findText(EventDetails.heading),
       by: const Offset(0, 320),
