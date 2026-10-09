@@ -167,4 +167,91 @@ void main() {
     expect(tester.getTopLeft(contentFinder).dy, closeTo(resting, 0.5));
     await tester.pumpAndSettle();
   });
+
+  Future<void> pumpTallSheet(WidgetTester tester, {required double height}) =>
+      tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(size: Size(400, 600)),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: PoiseScope(
+              motion: PoiseMotion.calm,
+              child: Center(
+                child: SizedBox(
+                  height: 600,
+                  child: Stack(
+                    children: [
+                      const Text('Behind'),
+                      PoiseSheet(
+                        open: true,
+                        onClose: () {},
+                        child: ColoredBox(
+                          key: const ValueKey('tall'),
+                          color: const Color(0xFFEEEEEE),
+                          child: SizedBox(height: height, width: 400),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+  testWidgets('content taller than the screen scrolls instead of spilling', (
+    tester,
+  ) async {
+    await pumpTallSheet(tester, height: 1200);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.getTopLeft(find.byType(PoiseSheet)).dy,
+      greaterThanOrEqualTo(0),
+    );
+    expect(
+      find.descendant(
+        of: find.byType(PoiseSheet),
+        matching: find.byType(Scrollable),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('pulling it up never shows a gap under it', (tester) async {
+    await pumpSheet(tester);
+    await openAndSettle(tester);
+    final screenBottom = tester.getBottomLeft(find.byType(Stack).first).dy;
+
+    final finger = await tester.startGesture(tester.getCenter(contentFinder));
+    for (var step = 0; step < 20; step++) {
+      await finger.moveBy(const Offset(0, -40));
+      await tester.pump(const Duration(milliseconds: 16));
+      final sheetBottom = tester
+          .getBottomLeft(
+            find
+                .ancestor(
+                  of: contentFinder,
+                  matching: find.byType(DecoratedBox),
+                )
+                .first,
+          )
+          .dy;
+      expect(sheetBottom, greaterThanOrEqualTo(screenBottom - 0.5));
+    }
+    await finger.up();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('hides what is behind it from screen readers while open', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    await pumpTallSheet(tester, height: 200);
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('Behind'), findsNothing);
+    expect(find.bySemanticsLabel('Sheet'), findsOneWidget);
+    semantics.dispose();
+  });
 }

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/physics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:poise/poise.dart';
@@ -24,6 +26,7 @@ final class PoiseSheet extends StatefulWidget {
     this.color = const Color(0xFFFFFFFF),
     this.scrimColor = const Color(0x59000000),
     this.closeLabel = 'Close',
+    this.label = 'Sheet',
   });
 
   final bool open;
@@ -38,6 +41,9 @@ final class PoiseSheet extends StatefulWidget {
   /// What a screen reader announces for the scrim behind the sheet.
   final String closeLabel;
 
+  /// What a screen reader announces when the sheet opens.
+  final String label;
+
   @override
   State<PoiseSheet> createState() => _PoiseSheetState();
 }
@@ -48,6 +54,7 @@ final class _PoiseSheetState extends State<PoiseSheet>
   static const _flickSpeed = 700.0;
   static const _overpullResistance = 0.25;
   static const _overhang = 48.0;
+  static const _topGap = 32.0;
 
   late final AnimationController _shown;
   final _sheet = GlobalKey();
@@ -126,10 +133,16 @@ final class _PoiseSheetState extends State<PoiseSheet>
     _feel = _motion.follow;
   }
 
+  /// Pulling up past fully open stiffens like rubber and stops before the
+  /// strip under the sheet runs out, so its bottom edge never shows.
   void _dragged(DragUpdateDetails details) {
     final pulled = (details.primaryDelta ?? 0) / _height;
-    final resistance = _shown.value > 1 ? _overpullResistance : 1.0;
-    _shown.value = (_shown.value - pulled * resistance).clamp(0.0, 2.0);
+    final furthest = 1 + _overhang / _height;
+    final over = ((_shown.value - 1) / (furthest - 1)).clamp(0.0, 1.0);
+    final resistance = _shown.value > 1
+        ? _overpullResistance * (1 - over)
+        : 1.0;
+    _shown.value = (_shown.value - pulled * resistance).clamp(0.0, furthest);
   }
 
   void _released(DragEndDetails details) {
@@ -150,84 +163,116 @@ final class _PoiseSheetState extends State<PoiseSheet>
   }
 
   @override
-  Widget build(BuildContext context) => PopScope(
-    canPop: !widget.open,
-    onPopInvokedWithResult: (didPop, _) {
-      if (!didPop) widget.onClose();
-    },
-    child: AnimatedBuilder(
-      animation: _shown,
-      builder: (context, sheet) {
-        final shown = _shown.value.clamp(0.0, 1.0);
-        final gone = shown == 0 && !widget.open && !_shown.isAnimating;
-        if (gone) return const SizedBox.shrink();
-        final travels = _feel is Move;
-        return Stack(
-          children: [
-            Positioned.fill(
-              child: Semantics(
-                button: true,
-                label: widget.closeLabel,
-                onTap: widget.onClose,
-                excludeSemantics: true,
-                child: GestureDetector(
-                  onTap: widget.open ? widget.onClose : null,
-                  child: ColoredBox(
-                    color: widget.scrimColor.withValues(
-                      alpha: widget.scrimColor.a * shown,
+  Widget build(BuildContext context) {
+    final topGap = MediaQuery.paddingOf(context).top + _topGap;
+    final fade = _shown.drive(const _UnitInterval());
+    return PopScope(
+      canPop: !widget.open,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) widget.onClose();
+      },
+      child: LayoutBuilder(
+        builder: (context, space) => AnimatedBuilder(
+          animation: _shown,
+          builder: (context, sheet) {
+            final shown = _shown.value.clamp(0.0, 1.0);
+            final gone = shown == 0 && !widget.open && !_shown.isAnimating;
+            if (gone) return const SizedBox.shrink();
+            final travels = _feel is Move;
+            return BlockSemantics(
+              blocking: widget.open,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: Semantics(
+                      button: true,
+                      label: widget.closeLabel,
+                      onTap: widget.onClose,
+                      excludeSemantics: true,
+                      child: GestureDetector(
+                        onTap: widget.open ? widget.onClose : null,
+                        child: ColoredBox(
+                          color: widget.scrimColor.withValues(
+                            alpha: widget.scrimColor.a * shown,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: IgnorePointer(
+                      ignoring: !widget.open,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight:
+                              math.max(0, space.maxHeight - topGap) + _overhang,
+                        ),
+                        child: Transform.translate(
+                          offset: const Offset(0, _overhang),
+                          child: FractionalTranslation(
+                            translation: Offset(
+                              0,
+                              travels ? 1 - _shown.value : 0,
+                            ),
+                            child: travels
+                                ? sheet
+                                : FadeTransition(opacity: fade, child: sheet),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: IgnorePointer(
-                ignoring: !widget.open,
-                child: Transform.translate(
-                  offset: const Offset(0, _overhang),
-                  child: FractionalTranslation(
-                    translation: Offset(0, travels ? 1 - _shown.value : 0),
-                    child: Opacity(opacity: travels ? 1 : shown, child: sheet),
+            );
+          },
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onVerticalDragStart: _dragStarted,
+            onVerticalDragUpdate: _dragged,
+            onVerticalDragEnd: _released,
+            child: Semantics(
+              scopesRoute: true,
+              namesRoute: true,
+              label: widget.label,
+              explicitChildNodes: true,
+              child: DecoratedBox(
+                key: _sheet,
+                decoration: BoxDecoration(
+                  color: widget.color,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(24),
                   ),
                 ),
-              ),
-            ),
-          ],
-        );
-      },
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onVerticalDragStart: _dragStarted,
-        onVerticalDragUpdate: _dragged,
-        onVerticalDragEnd: _released,
-        child: Semantics(
-          scopesRoute: true,
-          explicitChildNodes: true,
-          child: DecoratedBox(
-            key: _sheet,
-            decoration: BoxDecoration(
-              color: widget.color,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
-              ),
-            ),
-            child: SafeArea(
-              top: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const _Handle(),
-                  widget.child,
-                  const SizedBox(height: _overhang),
-                ],
+                child: SafeArea(
+                  top: false,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const _Handle(),
+                      Flexible(
+                        child: SingleChildScrollView(child: widget.child),
+                      ),
+                      const SizedBox(height: _overhang),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
+}
+
+/// Keeps a spring that overshoots inside the range an opacity accepts.
+final class _UnitInterval extends Animatable<double> {
+  const _UnitInterval();
+
+  @override
+  double transform(double t) => t.clamp(0.0, 1.0);
 }
 
 final class _Handle extends StatelessWidget {
