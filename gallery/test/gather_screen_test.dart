@@ -160,4 +160,22 @@ void main() {
     await tester.pumpAndSettle();
     expect(details, findsNothing);
   });
+
+  testWidgets('joining an event swaps the button through each step', (
+    tester,
+  ) async {
+    await pumpGather(tester);
+    await tester.tap(find.byType(EventCard).first);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(JoinState.open.label));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text(JoinState.joining.label), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    expect(find.text(JoinState.joined.label), findsOneWidget);
+    expect(find.text(JoinState.joining.label), findsNothing);
+  });
 }

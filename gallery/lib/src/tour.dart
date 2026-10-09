@@ -116,6 +116,19 @@ final class GalleryTour extends ChangeNotifier {
     );
     await _pause(const Duration(milliseconds: 1200));
 
+    await _tap(_find<EventCard>());
+    await _pause(const Duration(milliseconds: 1000));
+    _sayWord(MotionWord.change);
+    await _pause(_beat);
+    await _tap(_findText(JoinState.open.label));
+    await _pause(const Duration(milliseconds: 2000));
+    await _drag(
+      _findText(EventDetails.heading),
+      by: const Offset(0, 320),
+      over: const Duration(milliseconds: 450),
+    );
+    await _pause(const Duration(milliseconds: 1000));
+
     _sayWord(MotionWord.enter);
     await _pause(_beat);
     await _tap(_findLabel('Save to plans', index: 1));

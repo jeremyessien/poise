@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:poise_registry/poise_sheet/poise_sheet.dart';
 import 'package:poise_registry/reveal/reveal.dart';
 import 'package:poise_registry/staggered_column/staggered_column.dart';
+import 'package:poise_registry/text_swap/text_swap.dart';
 
 import 'gather/event_card.dart';
 import 'gather/event_details.dart';
@@ -31,6 +32,7 @@ final class RecipeStage extends StatelessWidget {
         GalleryRecipe.pressable => const _PressableStage(),
         GalleryRecipe.reveal => const _RevealStage(),
         GalleryRecipe.poiseSheet => const _SheetStage(),
+        GalleryRecipe.textSwap => const _TextSwapStage(),
         GalleryRecipe.staggeredColumn => _StaggerStage(replayKey: replayKey),
       },
     ),
@@ -95,6 +97,37 @@ final class _RevealStageState extends State<_RevealStage> {
   );
 }
 
+final class _TextSwapStage extends StatefulWidget {
+  const _TextSwapStage();
+
+  @override
+  State<_TextSwapStage> createState() => _TextSwapStageState();
+}
+
+final class _TextSwapStageState extends State<_TextSwapStage> {
+  var _state = JoinState.open;
+
+  JoinState get _next => JoinState.values[(_state.index + 1) % 3];
+
+  @override
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      const SizedBox(height: 96),
+      GatherButton(
+        label: TextSwap(_state.label),
+        onTap: () => setState(() => _state = _next),
+      ),
+      const SizedBox(height: 16),
+      const Text(
+        'Tap it to move it along: Join, Joining…, You\'re in',
+        style: GatherType.detail,
+      ),
+      const SizedBox(height: 96),
+    ],
+  );
+}
+
 final class _SheetStage extends StatefulWidget {
   const _SheetStage();
 
@@ -136,7 +169,11 @@ final class _SheetStageState extends State<_SheetStage> {
             child: PoiseSheet(
               open: _open,
               onClose: () => setState(() => _open = false),
-              child: EventDetails(event: sampleEvents[1]),
+              child: EventDetails(
+                event: sampleEvents[1],
+                joinState: JoinState.open,
+                onJoin: () {},
+              ),
             ),
           ),
         ],

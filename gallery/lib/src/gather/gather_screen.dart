@@ -24,10 +24,13 @@ final class GatherScreen extends StatefulWidget {
 
 final class _GatherScreenState extends State<GatherScreen> {
   static const _toastStays = Duration(milliseconds: 1800);
+  static const _joinTakes = Duration(milliseconds: 900);
 
   var _personality = Personality.calm;
   final _saved = <int>{};
   int? _opened;
+  final _joins = <int, JoinState>{};
+  final _joinTimers = <Timer>[];
   var _sheetOpen = false;
   var _toastVisible = false;
   var _toastText = '';
@@ -35,8 +38,21 @@ final class _GatherScreenState extends State<GatherScreen> {
 
   @override
   void dispose() {
+    for (final timer in _joinTimers) {
+      timer.cancel();
+    }
     _toastTimer?.cancel();
     super.dispose();
+  }
+
+  void _join(int index) {
+    if (_joins[index] case JoinState.joining || JoinState.joined) return;
+    setState(() => _joins[index] = JoinState.joining);
+    _joinTimers.add(
+      Timer(_joinTakes * timeDilation, () {
+        if (mounted) setState(() => _joins[index] = JoinState.joined);
+      }),
+    );
   }
 
   void _toggleSaved(int index) {
@@ -129,7 +145,11 @@ final class _GatherScreenState extends State<GatherScreen> {
                 open: _sheetOpen,
                 onClose: () => setState(() => _sheetOpen = false),
                 child: switch (_opened) {
-                  final index? => EventDetails(event: sampleEvents[index]),
+                  final index? => EventDetails(
+                    event: sampleEvents[index],
+                    joinState: _joins[index] ?? JoinState.open,
+                    onJoin: () => _join(index),
+                  ),
                   null => const SizedBox.shrink(),
                 },
               ),

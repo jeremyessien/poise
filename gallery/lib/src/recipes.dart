@@ -37,6 +37,20 @@ PoiseSheet(
   child: EventDetails(event: event),
 )''',
   ),
+  textSwap(
+    'TextSwap',
+    'Text that changes where it stands, rolling the new words in and '
+        'announcing them to screen readers.',
+    [MotionWord.change],
+    '''
+TextSwap(
+  switch (state) {
+    JoinState.open => 'Join',
+    JoinState.joining => 'Joining…',
+    JoinState.joined => "You're in",
+  },
+)''',
+  ),
   staggeredColumn(
     'StaggeredColumn',
     'A column whose children arrive one after another, spaced by the '
