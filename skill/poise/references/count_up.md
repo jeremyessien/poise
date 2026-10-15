@@ -7,7 +7,7 @@ A number that counts to its new value, so a balance or a score visibly climbs in
 - **Import:**
 
 ```dart
-import 'poise/count_up/count_up.dart';
+import 'package:my_app/poise/count_up/count_up.dart';
 ```
 
 When a number changes, `CountUp` counts there instead of jumping: a balance climbing from 1,200 to 1,450, spots left ticking down as people join, a score going up. It uses the `change` word, so it counts at your personality's pace.

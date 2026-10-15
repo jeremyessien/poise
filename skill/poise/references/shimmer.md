@@ -7,7 +7,7 @@ Loading placeholders that breathe or shimmer in your personality, and hold still
 - **Import:**
 
 ```dart
-import 'poise/shimmer/shimmer.dart';
+import 'package:my_app/poise/shimmer/shimmer.dart';
 ```
 
 While content loads, show grey placeholder shapes where it will go and wrap them in `Shimmer`. It uses the `loop` word, so it follows your personality. Where `loop` is a fade, as in calm and crisp, the placeholders breathe, dimming and brightening. Where it's a spring, as in playful, a highlight sweeps across them.

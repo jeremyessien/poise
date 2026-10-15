@@ -73,7 +73,7 @@ final class _Manifest {
   String reference(Map<String, _Manifest> all) {
     final folders = foldersToCopy(all).map((f) => '`$f/`').join(', ');
     final imports = [
-      for (final file in files) "import 'poise/$name/$file';",
+      for (final file in files) "import 'package:my_app/poise/$name/$file';",
     ].join('\n');
     final body = readme.split('\n').skipWhile((line) => line.startsWith('# '));
     return '''

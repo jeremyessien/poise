@@ -7,7 +7,7 @@ A tick that draws itself inside a circle that pops in, for the moment something 
 - **Import:**
 
 ```dart
-import 'poise/success_check/success_check.dart';
+import 'package:my_app/poise/success_check/success_check.dart';
 ```
 
 The moment a payment goes through, a task is done or a place is booked deserves more than a colour change. `SuccessCheck` pops a circle in with the `celebrate` word and draws a tick inside it.

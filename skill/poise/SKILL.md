@@ -85,7 +85,7 @@ Recipes are copied, not depended on, so the app owns the code.
 
 1. Add `poise` to `pubspec.yaml` (from pub.dev once it is published, until then as a git dependency on `packages/poise` in the poise repository).
 2. Copy the recipe's folder from `registry/lib/` into `lib/poise/` in the app, along with every folder listed under **Copy into** in its reference. Recipes only ever depend on Flutter, `poise` and each other.
-3. Import it: `import 'poise/pressable/pressable.dart';`
+3. Import it with a package import, so it resolves from any file in the app: `import 'package:my_app/poise/pressable/pressable.dart';`, with `my_app` replaced by the `name` in the app's `pubspec.yaml`. The references write it the same way.
 4. Don't edit the registry copy; edit the one in the app.
 
 ## Recipes

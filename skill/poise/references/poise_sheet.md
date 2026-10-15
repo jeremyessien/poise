@@ -7,7 +7,7 @@ A bottom sheet you can drag and throw, which settles from the speed your finger 
 - **Import:**
 
 ```dart
-import 'poise/poise_sheet/poise_sheet.dart';
+import 'package:my_app/poise/poise_sheet/poise_sheet.dart';
 ```
 
 A bottom sheet that behaves like a physical thing. It rises with `enter`, follows your finger while you drag it, and when you let go it settles with `follow` from the speed you threw it at. Nudge it and it springs back. Pull it far enough, or flick it down, and it goes.

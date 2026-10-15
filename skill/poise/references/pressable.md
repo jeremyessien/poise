@@ -7,7 +7,7 @@ Makes any widget respond to a press, and dims instead of shrinking when the phon
 - **Import:**
 
 ```dart
-import 'poise/pressable/pressable.dart';
+import 'package:my_app/poise/pressable/pressable.dart';
 ```
 
 Wrap anything tappable in `Pressable` and it answers the touch: it shrinks a little while held and springs back when released, using the `feedback` word from whatever personality is active. Calm barely moves, crisp is quick, playful has a small bounce.
