@@ -22,15 +22,11 @@ poise is where those fixes live once. Motion is one of ten words. A personality 
 
 ## Quick start
 
-**1. Add poise.** It isn't on pub.dev yet, so point at the repository:
+**1. Add poise.**
 
 ```yaml
 dependencies:
-  poise:
-    git:
-      url: https://github.com/jeremyessien/poise.git
-      path: packages/poise
-      ref: v0.1.0
+  poise: ^0.1.0
 ```
 
 **2. Choose a personality** above your app. Everything below reads it.
