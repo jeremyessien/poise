@@ -2,6 +2,8 @@
 
 Motion for Flutter apps, built so your AI agent already knows it.
 
+[![pub package](https://img.shields.io/pub/v/poise.svg)](https://pub.dev/packages/poise)
+
 <p align="center">
   <img src="docs/media/tour.gif" width="300" alt="Gather, the demo app, playing its tour: a press, a save, a sheet, a page change, then the dial turning from calm to crisp to playful">
 </p>
@@ -22,7 +24,7 @@ poise is where those fixes live once. Motion is one of ten words. A personality 
 
 ## Quick start
 
-**1. Add poise.**
+**1. Add poise** from [pub.dev](https://pub.dev/packages/poise).
 
 ```yaml
 dependencies:
