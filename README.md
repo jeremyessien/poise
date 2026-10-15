@@ -44,10 +44,10 @@ PoiseScope(
 )
 ```
 
-**3. Copy a recipe.** Take its folder from `registry/lib/` into `lib/poise/` in your app, with anything its `recipe.yaml` lists under `needs`, and use it.
+**3. Copy a recipe.** Take its folder from `registry/lib/` into `lib/poise/` in your app, with anything its `recipe.yaml` lists under `needs`, and import it by your own package name.
 
 ```dart
-import 'poise/reveal/reveal.dart';
+import 'package:my_app/poise/reveal/reveal.dart';
 
 Reveal(
   visible: justSaved,
