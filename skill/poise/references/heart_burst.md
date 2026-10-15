@@ -7,7 +7,7 @@ The like, where a heart pops and bursts when it's filled and simply presses when
 - **Import:**
 
 ```dart
-import 'poise/heart_burst/heart_burst.dart';
+import 'package:my_app/poise/heart_burst/heart_burst.dart';
 ```
 
 The like. Wrap your heart icon in `HeartBurst`, and when `liked` turns true the heart pops with the `celebrate` word while a ring and a burst of particles fly out around it. Taking the like back is quieter: a small press with `feedback`, because unliking isn't something to celebrate.

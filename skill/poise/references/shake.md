@@ -7,7 +7,7 @@ The "no" wobble for a wrong password or a code that didn't work, which flashes i
 - **Import:**
 
 ```dart
-import 'poise/shake/shake.dart';
+import 'package:my_app/poise/shake/shake.dart';
 ```
 
 The "no" of motion. Wrap a field or a button in `Shake` and it wobbles side to side when something didn't work: a wrong password, a promo code that isn't valid, a form that can't be sent yet. It uses the `attention` word, so the wobble dies away along your personality's curve. Crisp is a tight twitch, playful wobbles a little longer.

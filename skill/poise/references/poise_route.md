@@ -7,7 +7,7 @@ A page route that slides between screens in your personality, and keeps the swip
 - **Import:**
 
 ```dart
-import 'poise/poise_route/poise_route.dart';
+import 'package:my_app/poise/poise_route/poise_route.dart';
 ```
 
 Use `PoiseRoute` wherever you'd use `MaterialPageRoute` or `CupertinoPageRoute`. The new screen slides in from the end edge with the `transition` word while the one underneath drifts a little the other way, and going back uses `exit`, so it's quicker than arriving.

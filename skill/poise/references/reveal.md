@@ -7,7 +7,7 @@ Brings a widget in and takes it away on springs that turn around smoothly if you
 - **Import:**
 
 ```dart
-import 'poise/reveal/reveal.dart';
+import 'package:my_app/poise/reveal/reveal.dart';
 ```
 
 `Reveal` brings its child in when `visible` turns true and takes it away when it turns false. Arriving uses the `enter` word and leaving uses `exit`, so it moves the way the rest of your app does.

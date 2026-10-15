@@ -7,7 +7,7 @@ Text that changes where it stands, rolling the new words in and announcing them 
 - **Import:**
 
 ```dart
-import 'poise/text_swap/text_swap.dart';
+import 'package:my_app/poise/text_swap/text_swap.dart';
 ```
 
 Use `TextSwap` wherever a label changes: a button going from "Join" to "Joining…" to "You're in", a status line, a tab title. The new words roll up into the line as the old ones roll out, using the `change` word, and the space resizes to fit so nothing around it jumps.

@@ -7,7 +7,7 @@ A column whose children arrive one after another, spaced by the personality's st
 - **Import:**
 
 ```dart
-import 'poise/staggered_column/staggered_column.dart';
+import 'package:my_app/poise/staggered_column/staggered_column.dart';
 ```
 
 A `Column` whose children don't all appear at once. Each one arrives a moment after the one before, using `enter`, with the gap coming from the personality's `stagger`. Crisp ripples in quickly, playful takes its time.
