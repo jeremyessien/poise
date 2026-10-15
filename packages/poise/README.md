@@ -1,0 +1,30 @@
+# poise
+
+Motion tokens, feel and personalities for Flutter apps. This is the core package; the recipes you copy into an app, the gallery and the agent skill live in the [poise repository](https://github.com/jeremyessien/poise).
+
+Every piece of motion is one of ten words: `feedback`, `enter`, `exit`, `transition`, `change`, `attention`, `celebrate`, `follow`, `loop` and `stagger`. A personality decides what each word feels like. Your code says the word and never picks a duration or a curve by hand.
+
+```dart
+import 'package:poise/poise.dart';
+
+PoiseScope(
+  motion: PoiseMotion.crisp,
+  child: const App(),
+)
+
+// Anywhere below it:
+final enter = context.motion.enter;
+AnimatedContainer(duration: enter.duration, curve: enter.curve, child: card);
+```
+
+A feel is a `Move`, a spring described by `perceivedDuration` and `bounce`, or a `Fade`, a duration and a curve for colour and opacity. Fades can't bounce. A `Move` also exposes its `spring` for gestures that need to carry on from a finger's speed.
+
+```dart
+final motion = PoiseMotion.calm.copyWith(
+  enter: const Move(perceivedDuration: Duration(milliseconds: 260), bounce: 0.1),
+);
+```
+
+When the phone asks for less motion, `context.motion` is already `PoiseMotion.reduced`: timed words become short fades, nothing travels, groups arrive together. There is nothing to check yourself.
+
+Three personalities ship: `calm` for products where trust and focus matter, `crisp` for tools and banking, `playful` for games and social. Read [docs/motion-vocabulary.md](https://github.com/jeremyessien/poise/blob/main/docs/motion-vocabulary.md) for what each word means and [docs/feel.md](https://github.com/jeremyessien/poise/blob/main/docs/feel.md) for the values behind them.

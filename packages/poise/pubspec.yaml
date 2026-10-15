@@ -1,6 +1,7 @@
 name: poise
 description: Motion tokens, feel and personalities for Flutter apps.
-version: 0.0.1
+version: 0.1.0
+repository: https://github.com/jeremyessien/poise
 publish_to: none
 
 environment:
