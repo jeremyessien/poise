@@ -1,7 +1,20 @@
 name: poise
-description: Motion tokens, feel and personalities for Flutter apps.
+description: Motion for Flutter apps in ten words, with springs, three personalities and reduce motion built in, so an app says enter and never picks a duration.
 version: 0.1.0
 repository: https://github.com/jeremyessien/poise
+topics:
+  - animation
+  - motion
+  - springs
+  - design-system
+  - accessibility
+screenshots:
+  - description: Gather, a small app built from poise recipes, in the calm personality.
+    path: screenshots/gather-calm.png
+  - description: The same screen in the playful personality.
+    path: screenshots/gather-playful.png
+  - description: The ten motion words, each with its curve in every personality.
+    path: screenshots/words.png
 
 environment:
   sdk: ^3.11.0

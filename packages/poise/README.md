@@ -1,6 +1,12 @@
 # poise
 
-Motion tokens, feel and personalities for Flutter apps. This is the core package; the recipes you copy into an app, the gallery and the agent skill live in the [poise repository](https://github.com/jeremyessien/poise).
+Motion for Flutter apps, built so your AI agent already knows it.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/jeremyessien/poise/main/docs/media/tour.gif" width="280" alt="Gather, a small app built from poise recipes, playing its tour: a press, a save, a sheet, a page change, then the dial turning from calm to crisp to playful">
+</p>
+
+This is the core package: the ten words, springs and fades, the personalities, and `context.motion`. The recipes you copy into an app, the gallery and the agent skill live in the [poise repository](https://github.com/jeremyessien/poise).
 
 Every piece of motion is one of ten words: `feedback`, `enter`, `exit`, `transition`, `change`, `attention`, `celebrate`, `follow`, `loop` and `stagger`. A personality decides what each word feels like. Your code says the word and never picks a duration or a curve by hand.
 
