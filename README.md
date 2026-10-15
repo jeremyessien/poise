@@ -8,4 +8,8 @@ poise is where those fixes live once and for all. It has motion tokens, componen
 
 Two ideas sit underneath all of it. Motion is part of a component, not decoration added afterwards: a button isn't done until its press feels right. And it has to hold up on the phones people actually own, not just on a simulator running on a MacBook.
 
+## For your agent
+
+The skill lives in [`skill/poise`](skill/poise/SKILL.md). Copy that folder into wherever your agent loads skills from, for example `.claude/skills/poise/` in your app, and it knows the ten words, the personalities, the rules, and every recipe in the registry. `SKILL.md` is short; each recipe has its own reference file that is generated from the registry, so it can't drift from the code you copy.
+
 It's early, and I'm still building it. Nothing here is ready to use yet.
