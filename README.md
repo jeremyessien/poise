@@ -3,9 +3,7 @@
 Motion for Flutter apps, built so your AI agent already knows it.
 
 <p align="center">
-  <img src="docs/media/gather-calm.png" width="230" alt="Gather, the demo app, in the calm personality">
-  <img src="docs/media/gather-playful.png" width="230" alt="The same screen in the playful personality">
-  <img src="docs/media/words.png" width="230" alt="The ten motion words, each with its curve in every personality">
+  <img src="docs/media/tour.gif" width="300" alt="Gather, the demo app, playing its tour: a press, a save, a sheet, a page change, then the dial turning from calm to crisp to playful">
 </p>
 
 Every Flutter app I build ends up with me explaining the same things to my agent: put a spring on this press, bring the list in one item at a time, and keep it smooth on cheap phones. The agent gets close, but close in motion often looks like a bug, so I fix it by hand. Then the next project comes along and I explain it all over again.
@@ -104,8 +102,10 @@ Every recipe follows the personality, handles reduce motion, mirrors in right-to
 | [`Shimmer`](registry/lib/shimmer) | Loading placeholders that breathe or shimmer in your personality, and hold still when motion is reduced. |
 
 <p align="center">
-  <img src="docs/media/recipe-heartburst.png" width="230" alt="A recipe's page: its stage, the dial, and how it moves">
-  <img src="docs/media/menu-recipes.png" width="230" alt="The gallery's menu, listing every recipe and the switches">
+  <img src="docs/media/gather-calm.png" width="180" alt="Gather in calm">
+  <img src="docs/media/gather-playful.png" width="180" alt="Gather in playful">
+  <img src="docs/media/words.png" width="180" alt="The ten words, each with its curve in every personality">
+  <img src="docs/media/recipe-heartburst.png" width="180" alt="A recipe's page: its stage, the dial, and how it moves">
 </p>
 
 ## The gallery
