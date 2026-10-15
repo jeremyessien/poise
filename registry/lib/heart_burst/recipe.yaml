@@ -1,0 +1,8 @@
+name: heart_burst
+title: HeartBurst
+summary: The like, where a heart pops and bursts when it's filled and simply presses when it's taken back.
+words: [celebrate, feedback]
+files:
+  - heart_burst.dart
+needs: []
+since: 0.1.0

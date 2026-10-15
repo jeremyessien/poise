@@ -1,0 +1,8 @@
+name: shimmer
+title: Shimmer
+summary: Loading placeholders that breathe or shimmer in your personality, and hold still when motion is reduced.
+words: [loop]
+files:
+  - shimmer.dart
+needs: []
+since: 0.1.0

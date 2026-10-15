@@ -1,0 +1,8 @@
+name: success_check
+title: SuccessCheck
+summary: A tick that draws itself inside a circle that pops in, for the moment something has worked.
+words: [celebrate, exit]
+files:
+  - success_check.dart
+needs: []
+since: 0.1.0

@@ -1,0 +1,8 @@
+name: shake
+title: Shake
+summary: The "no" wobble for a wrong password or a code that didn't work, which flashes instead when motion is reduced.
+words: [attention]
+files:
+  - shake.dart
+needs: []
+since: 0.1.0

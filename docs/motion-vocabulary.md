@@ -6,9 +6,9 @@ Every piece of motion in poise answers three questions, and each one has its own
 
 **Purpose** is why it moves. It's the vocabulary below, ten words that every app, developer and agent uses the same way.
 
-**Recipes** are what exactly happens. They're named, complete effects like `heartBurst` or `shake`, built out of purposes.
+**Recipes** are what exactly happens. They're named, complete pieces like `Pressable`, `Reveal` or `StaggeredColumn`, built out of purposes, that you copy into your app from the registry.
 
-When an agent gets a request, it starts with the purpose and then picks a recipe. If someone asks for a like animation, that's a `celebrate`, and the recipe for it is `heartBurst`. The agent never has to make up a number.
+When an agent gets a request, it starts with the purpose and then picks a recipe. If someone asks for a card that rises in, that's an `enter`, and the recipe for it is `Reveal`. The agent never has to make up a number.
 
 ## The ten words
 
@@ -46,7 +46,7 @@ Position, size and rotation can overshoot and bounce. Colour and opacity never d
 
 Every word has a reduced-motion version for people who turn animations off. That's usually a quick fade, and never just nothing, because the change itself still has to be visible.
 
-Every word has a cheaper fallback for low-end phones.
+Every word will get a cheaper fallback for low-end phones once the values have been tuned on real ones (#10).
 
 Anything interrupted halfway, like a press released early or a sheet grabbed mid-close, reverses smoothly from where it is. It doesn't jump.
 
@@ -54,4 +54,4 @@ Anything that slides mirrors itself in right-to-left languages.
 
 ## Personalities
 
-The ten words never change. The values behind them do, and a set of values is a personality. A health app wants calm. A banking app wants crisp, fast and exact. A kids' app wants something bouncy. poise will ship a few personalities, and any app can make its own or adjust a single word without touching the rest.
+The ten words never change. The values behind them do, and a set of values is a personality. A health app wants calm. A banking app wants crisp, fast and exact. A kids' app wants something bouncy. poise ships three, `calm`, `crisp` and `playful`, and any app can make its own or adjust a single word with `copyWith` without touching the rest. The values are described in [feel.md](feel.md).
