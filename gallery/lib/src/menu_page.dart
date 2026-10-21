@@ -63,6 +63,12 @@ final class MenuPage extends StatelessWidget {
               value: settings.showTouches,
               onChanged: (value) => settings.showTouches = value,
             ),
+            _Toggle(
+              title: 'Show haptics',
+              detail: 'A label naming each haptic as it plays',
+              value: settings.showHaptics,
+              onChanged: (value) => settings.showHaptics = value,
+            ),
             LinkRow(
               title: 'Play the tour',
               detail: 'Gather runs itself, ready to record',

@@ -7,6 +7,7 @@ final class GallerySettings extends ChangeNotifier {
   bool _slowMotion = false;
   bool _reduceMotion = false;
   bool _showTouches = false;
+  bool _showHaptics = false;
 
   bool get slowMotion => _slowMotion;
   set slowMotion(bool value) {
@@ -27,6 +28,13 @@ final class GallerySettings extends ChangeNotifier {
   set showTouches(bool value) {
     if (value == _showTouches) return;
     _showTouches = value;
+    notifyListeners();
+  }
+
+  bool get showHaptics => _showHaptics;
+  set showHaptics(bool value) {
+    if (value == _showHaptics) return;
+    _showHaptics = value;
     notifyListeners();
   }
 
