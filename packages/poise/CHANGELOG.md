@@ -1,6 +1,7 @@
 ## 0.2.0
 
-- Four haptic words as `HapticWord`: `tap`, `select`, `confirm` and `warn`. `play()` sends one to the phone.
+- Four haptic words as `HapticWord`: `tap`, `select`, `confirm` and `warn`. `play(context)` sends one to the phone.
+- `PoiseScope(haptics: false)` turns haptics off for everything below it. Nested scopes keep the setting unless they set their own.
 - `MotionWord.haptic`, the haptic that goes with each motion word by default: `feedback` taps, `change` selects, `celebrate` confirms, `attention` warns, and the rest stay silent.
 
 ## 0.1.0
