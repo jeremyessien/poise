@@ -9,8 +9,8 @@ import 'package:poise/poise.dart';
 /// with `exit`. The tick is painted straight from the animation, so nothing
 /// rebuilds while it draws.
 ///
-/// When the phone asks for less motion, the finished tick fades in, already
-/// drawn. Screen readers hear [semanticLabel] once it's shown.
+/// Showing it plays the `confirm` haptic. When the phone asks for less
+/// motion, the finished tick fades in, already drawn. Screen readers hear [semanticLabel] once it's shown.
 final class SuccessCheck extends StatefulWidget {
   const SuccessCheck({
     super.key,
@@ -19,6 +19,7 @@ final class SuccessCheck extends StatefulWidget {
     this.color = const Color(0xFF2E7D52),
     this.tickColor = const Color(0xFFFFFFFF),
     this.semanticLabel = 'Done',
+    this.haptic = true,
   });
 
   final bool shown;
@@ -26,6 +27,11 @@ final class SuccessCheck extends StatefulWidget {
   final Color color;
   final Color tickColor;
   final String semanticLabel;
+
+  /// Plays the `confirm` haptic when [shown] turns true. A tick that's
+  /// already showing when the screen opens stays silent, because nothing has
+  /// just happened.
+  final bool haptic;
 
   @override
   State<SuccessCheck> createState() => _SuccessCheckState();
@@ -61,6 +67,7 @@ final class _SuccessCheckState extends State<SuccessCheck>
   void didUpdateWidget(SuccessCheck oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.shown == widget.shown) return;
+    if (widget.shown && widget.haptic) HapticWord.confirm.play(context);
     widget.shown ? _show() : _hide();
   }
 

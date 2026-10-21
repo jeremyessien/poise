@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'gather/gather_screen.dart';
+import 'haptic_labels.dart';
 import 'menu_page.dart';
 import 'recipe_page.dart';
 import 'recipes.dart';
@@ -14,9 +15,14 @@ import 'words.dart';
 import 'words_page.dart';
 
 final class GalleryApp extends StatefulWidget {
-  const GalleryApp({super.key, required this.settings});
+  GalleryApp({super.key, required this.settings, PlayedHaptics? haptics})
+    : haptics = haptics ?? PlayedHaptics();
 
   final GallerySettings settings;
+
+  /// The haptics to name on screen. Only the real app's [GalleryBinding]
+  /// hears them; anywhere else this stays quiet.
+  final PlayedHaptics haptics;
 
   @override
   State<GalleryApp> createState() => _GalleryAppState();
@@ -45,8 +51,11 @@ final class _GalleryAppState extends State<GalleryApp> {
       settings: widget.settings,
       child: GalleryTourScope(
         tour: _tour,
-        child: ShowTouches(
-          child: TourOverlay(child: child ?? const SizedBox.shrink()),
+        child: ShowHaptics(
+          haptics: widget.haptics,
+          child: ShowTouches(
+            child: TourOverlay(child: child ?? const SizedBox.shrink()),
+          ),
         ),
       ),
     ),

@@ -24,6 +24,7 @@ final class _Manifest {
     required this.title,
     required this.summary,
     required this.words,
+    required this.haptics,
     required this.files,
     required this.needs,
     required this.readme,
@@ -41,6 +42,7 @@ final class _Manifest {
       title: facts['title'] as String,
       summary: facts['summary'] as String,
       words: (facts['words'] as YamlList).cast<String>(),
+      haptics: (facts['haptics'] as YamlList).cast<String>(),
       files: (facts['files'] as YamlList).cast<String>(),
       needs: (facts['needs'] as YamlList).cast<String>(),
       readme: File('${folder.path}/README.md').readAsStringSync(),
@@ -51,6 +53,7 @@ final class _Manifest {
   final String title;
   final String summary;
   final List<String> words;
+  final List<String> haptics;
   final List<String> files;
   final List<String> needs;
   final String readme;
@@ -82,6 +85,7 @@ final class _Manifest {
 $summary
 
 - **Words:** ${words.join(', ')}
+- **Haptics:** ${haptics.isEmpty ? 'none' : haptics.join(', ')}
 - **Copy into `lib/poise/`:** $folders
 - **Import:**
 

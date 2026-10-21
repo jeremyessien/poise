@@ -3,6 +3,7 @@
 A number that counts to its new value, so a balance or a score visibly climbs instead of jumping.
 
 - **Words:** change
+- **Haptics:** none
 - **Copy into `lib/poise/`:** `text_swap/`, `count_up/`
 - **Import:**
 

@@ -3,6 +3,7 @@
 A page route that slides between screens in your personality, and keeps the swipe back on iOS.
 
 - **Words:** transition, exit
+- **Haptics:** none
 - **Copy into `lib/poise/`:** `poise_route/`
 - **Import:**
 

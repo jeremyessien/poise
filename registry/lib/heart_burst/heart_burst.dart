@@ -12,18 +12,26 @@ import 'package:poise/poise.dart';
 /// [HeartBurst] only adds the motion. The ring and particles are painted
 /// straight from the animation, so nothing rebuilds while they fly.
 ///
+/// Filling the heart plays the `tap` haptic. A like is a small moment, so it
+/// isn't a `confirm`.
+///
 /// When the phone asks for less motion, nothing pops or flies. The filled
-/// icon says it on its own.
+/// icon says it on its own, and the haptic still plays.
 final class HeartBurst extends StatefulWidget {
   const HeartBurst({
     super.key,
     required this.liked,
     required this.child,
     this.color = const Color(0xFFFF5A5F),
+    this.haptic = true,
   });
 
   final bool liked;
   final Widget child;
+
+  /// Plays the `tap` haptic when [liked] turns true. Turn it off where likes
+  /// arrive from somewhere other than the user's finger, like a sync.
+  final bool haptic;
 
   /// The colour of the ring and the particles.
   final Color color;
@@ -60,7 +68,9 @@ final class _HeartBurstState extends State<HeartBurst>
   @override
   void didUpdateWidget(HeartBurst oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.liked == widget.liked || _motion.reducesMotion) return;
+    if (oldWidget.liked == widget.liked) return;
+    if (widget.liked && widget.haptic) HapticWord.tap.play(context);
+    if (_motion.reducesMotion) return;
     if (widget.liked) {
       _pop
         ..duration = _motion.celebrate.duration

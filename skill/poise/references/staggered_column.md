@@ -3,6 +3,7 @@
 A column whose children arrive one after another, spaced by the personality's stagger gap.
 
 - **Words:** stagger, enter
+- **Haptics:** none
 - **Copy into `lib/poise/`:** `reveal/`, `staggered_column/`
 - **Import:**
 

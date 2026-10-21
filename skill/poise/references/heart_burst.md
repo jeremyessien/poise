@@ -3,6 +3,7 @@
 The like, where a heart pops and bursts when it's filled and simply presses when it's taken back.
 
 - **Words:** celebrate, feedback
+- **Haptics:** tap
 - **Copy into `lib/poise/`:** `heart_burst/`
 - **Import:**
 
@@ -23,4 +24,6 @@ HeartBurst(
 
 The ring and particles are painted straight from the animation and spill past the icon's edges, so leave a little room around it and don't clip its parent. Nothing in your widget tree rebuilds while they fly.
 
-When the phone asks for less motion, nothing pops or flies. The filled heart says it on its own.
+Filling the heart plays the `tap` haptic, and taking it back plays nothing. A like is a small moment, so it's a light tap rather than the stronger `confirm` a payment gets. `HeartBurst` can't tell whether `liked` changed because of a finger or because likes synced from somewhere else, so pass `haptic: false` where they can arrive on their own.
+
+When the phone asks for less motion, nothing pops or flies. The filled heart says it on its own, and the haptic still plays.

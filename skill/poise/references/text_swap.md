@@ -3,6 +3,7 @@
 Text that changes where it stands, rolling the new words in and announcing them to screen readers.
 
 - **Words:** change
+- **Haptics:** none
 - **Copy into `lib/poise/`:** `text_swap/`
 - **Import:**
 

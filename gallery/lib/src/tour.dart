@@ -58,10 +58,13 @@ final class GalleryTour extends ChangeNotifier {
     _stopRequested = false;
     final before = (
       touches: settings.showTouches,
+      haptics: settings.showHaptics,
       slow: settings.slowMotion,
       reduce: settings.reduceMotion,
     );
-    settings.showTouches = true;
+    settings
+      ..showTouches = true
+      ..showHaptics = true;
     notifyListeners();
     try {
       await _walk();
@@ -73,6 +76,7 @@ final class GalleryTour extends ChangeNotifier {
       if (!_disposed) {
         settings
           ..showTouches = before.touches
+          ..showHaptics = before.haptics
           ..slowMotion = before.slow
           ..reduceMotion = before.reduce;
         notifyListeners();

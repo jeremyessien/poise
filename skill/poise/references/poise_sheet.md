@@ -3,6 +3,7 @@
 A bottom sheet you can drag and throw, which settles from the speed your finger let go at.
 
 - **Words:** follow, enter, exit
+- **Haptics:** none
 - **Copy into `lib/poise/`:** `poise_sheet/`
 - **Import:**
 

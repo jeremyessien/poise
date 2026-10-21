@@ -5,16 +5,23 @@ import 'package:poise/poise.dart';
 ///
 /// While held, the child shrinks slightly and springs back on release, in
 /// whatever personality the nearest `PoiseScope` sets. When the phone asks for
-/// less motion it dims instead of shrinking. [onTap] fires on release.
+/// less motion it dims instead of shrinking. [onTap] fires on release, and
+/// [haptic] adds the `tap` haptic.
 final class Pressable extends StatefulWidget {
   const Pressable({
     super.key,
     required this.onTap,
     required this.child,
     this.semanticLabel,
+    this.haptic = false,
   });
 
   final VoidCallback onTap;
+
+  /// Plays the `tap` haptic as the finger comes down. Off by default, because
+  /// presses happen often and a haptic on every one soon wears thin. Turn it
+  /// on for the presses that matter.
+  final bool haptic;
 
   /// What a screen reader announces for this button. Leave it out when the
   /// child's own text already says it. Buttons inside the child stay
@@ -46,6 +53,7 @@ final class _PressableState extends State<Pressable>
   }
 
   void _down() {
+    if (widget.haptic) HapticWord.tap.play(context);
     _press.duration = _feel.duration;
     _press.forward();
   }
