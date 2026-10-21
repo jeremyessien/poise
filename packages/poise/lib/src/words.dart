@@ -1,3 +1,5 @@
+import 'haptics.dart';
+
 /// The ten motion words. Every piece of motion in a poise app is one of
 /// these, and a personality decides what each one feels like.
 enum MotionWord {
@@ -29,5 +31,20 @@ enum MotionWord {
   loop,
 
   /// The gap between items in a group, so they arrive one after another.
-  stagger,
+  stagger;
+
+  /// The haptic that goes with this word by default, or null when it should
+  /// be felt as nothing.
+  HapticWord? get haptic => switch (this) {
+    MotionWord.feedback => HapticWord.tap,
+    MotionWord.change => HapticWord.select,
+    MotionWord.attention => HapticWord.warn,
+    MotionWord.celebrate => HapticWord.confirm,
+    MotionWord.enter ||
+    MotionWord.exit ||
+    MotionWord.transition ||
+    MotionWord.follow ||
+    MotionWord.loop ||
+    MotionWord.stagger => null,
+  };
 }

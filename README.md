@@ -20,7 +20,7 @@ poise is where those fixes live once. Motion is one of ten words. A personality 
 | [`registry`](registry) | Eleven recipes, one for every word, each with tests, a manifest and a README. You copy them in. |
 | [`skill/poise`](skill/poise) | What your agent reads. Short, with one reference per recipe generated from the registry. |
 | [`gallery`](gallery) | Gather, a small app built entirely from the recipes, with a dial that switches its personality live, a page per recipe and word, and a tour that plays itself for recordings. |
-| [`docs`](docs) | [The vocabulary](docs/motion-vocabulary.md) and [the feel layer](docs/feel.md). |
+| [`docs`](docs) | [The vocabulary](docs/motion-vocabulary.md), [the haptic words](docs/haptics-vocabulary.md) and [the feel layer](docs/feel.md). |
 
 ## Quick start
 
