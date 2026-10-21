@@ -11,8 +11,8 @@ import 'package:poise/poise.dart';
 /// each failed attempt, like a count of attempts. The shake dies away along
 /// the personality's `attention` curve, so playful wobbles longer than crisp.
 ///
-/// When the phone asks for less motion, the child dims and brightens once
-/// instead of moving. A shake says nothing to a screen reader, so give it an
+/// Every shake plays the `warn` haptic. When the phone asks for less motion,
+/// the child dims and brightens once instead of moving. A shake says nothing to a screen reader, so give it an
 /// [announcement] to read out each time.
 final class Shake extends StatefulWidget {
   const Shake({
@@ -21,6 +21,7 @@ final class Shake extends StatefulWidget {
     required this.child,
     this.announcement,
     this.reach = 12,
+    this.haptic = true,
   });
 
   /// Shakes whenever this changes.
@@ -33,6 +34,9 @@ final class Shake extends StatefulWidget {
 
   /// How far each swing goes, in logical pixels.
   final double reach;
+
+  /// Plays the `warn` haptic with every shake.
+  final bool haptic;
 
   @override
   State<Shake> createState() => _ShakeState();
@@ -65,6 +69,7 @@ final class _ShakeState extends State<Shake>
     _progress
       ..duration = _feel.duration
       ..forward(from: 0);
+    if (widget.haptic) HapticWord.warn.play(context);
     if (widget.announcement case final message?) {
       SemanticsService.sendAnnouncement(
         View.of(context),

@@ -55,6 +55,7 @@ Four haptic words, each a single short haptic: `tap` (a press), `select` (a valu
 - **Only for what the user did, or its result.** A number the server updated is a `change` with no haptic. Never put a haptic on a `loop`.
 - **Once, at the moment it happens.** `tap` when the finger comes down, `select` when the toggle flips, not every frame.
 - **Never the only message.** The screen still has to show the result.
+- **The recipes already play theirs.** `Shake` warns, `SuccessCheck` confirms, `HeartBurst` taps when a heart fills, each only when it changes, never on the first build. `Pressable` stays silent unless given `haptic: true`, because presses are too frequent to all be felt. Don't add a second `play` around them; pass `haptic: false` to leave one out.
 - **Wire the app's vibration setting to `PoiseScope(haptics: false)`.** Don't check it yourself before playing; `play(context)` already does. A nested scope without `haptics` keeps the outer setting.
 - **Reduce motion doesn't silence haptics.** Don't skip them under `reduced`; the phone's own haptics setting already applies.
 

@@ -5,6 +5,7 @@ import 'package:poise/poise.dart';
 import 'package:yaml/yaml.dart';
 
 final motionWords = {for (final word in MotionWord.values) word.name};
+final hapticWords = {for (final word in HapticWord.values) word.name};
 
 void main() {
   final recipeFolders =
@@ -48,6 +49,12 @@ void main() {
         if (words is! YamlList) fail('words should be a list');
         expect(words, isNotEmpty);
         expect(motionWords.containsAll(words), isTrue, reason: '$words');
+      });
+
+      test('uses only the four haptic words', () {
+        final haptics = recipe['haptics'];
+        if (haptics is! YamlList) fail('haptics should be a list');
+        expect(hapticWords.containsAll(haptics), isTrue, reason: '$haptics');
       });
 
       test('lists files that exist', () {

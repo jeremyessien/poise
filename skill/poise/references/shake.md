@@ -3,6 +3,7 @@
 The "no" wobble for a wrong password or a code that didn't work, which flashes instead when motion is reduced.
 
 - **Words:** attention
+- **Haptics:** warn
 - **Copy into `lib/poise/`:** `shake/`
 - **Import:**
 
@@ -24,4 +25,6 @@ It shakes every time `trigger` changes, so pass something that changes on each f
 
 A shake on its own says nothing to someone using a screen reader. Give it an `announcement` and it's read out each time it shakes. Still show the error as text too; motion and colour shouldn't be the only way to know something went wrong.
 
-When the phone asks for less motion, the child doesn't move. It dims and brightens once instead, which still draws the eye.
+Every shake plays the `warn` haptic too. Pass `haptic: false` to leave it out.
+
+When the phone asks for less motion, the child doesn't move. It dims and brightens once instead, which still draws the eye, and the haptic still plays.

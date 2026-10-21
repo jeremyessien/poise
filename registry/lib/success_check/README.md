@@ -8,6 +8,8 @@ SuccessCheck(shown: paymentWentThrough)
 
 Set `shown` to true and it celebrates; set it back to false and it fades away with `exit`. Change `size`, `color` and `tickColor` to fit your app. Calm pops it gently, playful gives it a bounce.
 
+When `shown` turns true it plays the `confirm` haptic. A tick that's already showing when the screen opens stays silent, because nothing has just happened. Pass `haptic: false` to leave it out.
+
 The tick is painted straight from the animation, so nothing in your widget tree rebuilds while it draws. That keeps it cheap on low-end phones.
 
 When the phone asks for less motion, the finished tick fades in, already drawn and at full size. Screen readers hear `semanticLabel`, "Done" by default, once it's shown. Give it something more specific, like "Payment sent", when you can.

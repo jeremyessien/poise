@@ -3,6 +3,7 @@
 Brings a widget in and takes it away on springs that turn around smoothly if you change your mind halfway.
 
 - **Words:** enter, exit
+- **Haptics:** none
 - **Copy into `lib/poise/`:** `reveal/`
 - **Import:**
 

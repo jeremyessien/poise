@@ -14,4 +14,6 @@ Pressable(
 
 Use it for cards, list rows and custom buttons, anything people press that doesn't already come with its own press effect. Flutter's own buttons already have one, so wrapping them gives you two.
 
+It doesn't play a haptic unless you ask. Presses happen all the time, and a haptic on every one soon wears thin. Pass `haptic: true` for the presses that matter, and it plays the `tap` haptic as the finger comes down, in step with the shrink.
+
 `onTap` fires when the finger lifts, not when it lands, so a press that turns into a scroll doesn't count as a tap. Flutter also waits about 100ms before showing the press, so scrolling past a row doesn't make it flinch.

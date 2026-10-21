@@ -3,6 +3,7 @@
 Loading placeholders that breathe or shimmer in your personality, and hold still when motion is reduced.
 
 - **Words:** loop
+- **Haptics:** none
 - **Copy into `lib/poise/`:** `shimmer/`
 - **Import:**
 
