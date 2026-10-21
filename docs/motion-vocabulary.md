@@ -52,6 +52,8 @@ Anything interrupted halfway, like a press released early or a sheet grabbed mid
 
 Anything that slides mirrors itself in right-to-left languages.
 
+A few words also have a haptic that goes with them, so a press can be felt as well as seen. Those are in [haptics-vocabulary.md](haptics-vocabulary.md).
+
 ## Personalities
 
 The ten words never change. The values behind them do, and a set of values is a personality. A health app wants calm. A banking app wants crisp, fast and exact. A kids' app wants something bouncy. poise ships three, `calm`, `crisp` and `playful`, and any app can make its own or adjust a single word with `copyWith` without touching the rest. The values are described in [feel.md](feel.md).

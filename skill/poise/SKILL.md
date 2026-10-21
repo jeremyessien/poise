@@ -47,6 +47,16 @@ AnimatedContainer(duration: enter.duration, curve: enter.curve, ...);
 - `follow` is always a `Move`. `stagger` is a `Duration`. `motion.feelOf(MotionWord.enter)` reads a word by name.
 - When the phone asks for less motion, `context.motion` is already `PoiseMotion.reduced`: timed words become short fades, nothing travels, `stagger` is zero and `reducesMotion` is true. Nothing else to check.
 
+## Haptics
+
+Four haptic words, each a single buzz: `tap` (a press), `select` (a value moved one step: toggle, segmented control, picker), `confirm` (something the user did worked) and `warn` (something the user did failed). `HapticWord.tap.play()` plays one. Each motion word knows its default, `MotionWord.feedback.haptic`: `feedback` is `tap`, `change` is `select`, `celebrate` is `confirm`, `attention` is `warn`, and every other word is null and stays silent.
+
+- **No raw `HapticFeedback` calls.** Use the word, the same way motion never uses a hand-picked duration.
+- **Only for what the user did, or its result.** A number the server updated is a `change` with no haptic. Never put a haptic on a `loop`.
+- **Once, at the moment it happens.** `tap` when the finger comes down, `select` when the toggle flips, not every frame.
+- **Never the only message.** The screen still has to show the result.
+- **Reduce motion doesn't silence haptics.** Don't skip them under `reduced`; the phone's own haptics setting already applies.
+
 ## Personalities
 
 - `calm`: settled and quiet, for products where trust and focus matter more than delight. Health, finance, reading. Only `attention` bounces.
