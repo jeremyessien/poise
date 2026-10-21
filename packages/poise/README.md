@@ -33,11 +33,13 @@ final motion = PoiseMotion.calm.copyWith(
 
 When the phone asks for less motion, `context.motion` is already `PoiseMotion.reduced`: timed words become short fades, nothing travels, groups arrive together. There is nothing to check yourself.
 
-Four haptic words go with them: `tap`, `select`, `confirm` and `warn`. Each motion word knows its own, so a press and its buzz come from the same place.
+Four haptic words go with them: `tap`, `select`, `confirm` and `warn`. Each motion word knows its own, so a press and the tap you feel come from the same place.
 
 ```dart
-MotionWord.feedback.haptic?.play(); // HapticWord.tap
-HapticWord.warn.play();
+MotionWord.feedback.haptic?.play(context); // HapticWord.tap
+HapticWord.warn.play(context);
 ```
+
+`PoiseScope(haptics: false)` turns them all off below it, for apps with their own vibration setting.
 
 Three personalities ship: `calm` for products where trust and focus matter, `crisp` for tools and banking, `playful` for games and social. Read [docs/motion-vocabulary.md](https://github.com/jeremyessien/poise/blob/main/docs/motion-vocabulary.md) for what each word means, [docs/haptics-vocabulary.md](https://github.com/jeremyessien/poise/blob/main/docs/haptics-vocabulary.md) for the haptics, and [docs/feel.md](https://github.com/jeremyessien/poise/blob/main/docs/feel.md) for the values behind them.
